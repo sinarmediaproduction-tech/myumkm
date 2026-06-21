@@ -94,6 +94,16 @@
         </span>
       </div>
 
+      <div class="flex justify-end mt-1">
+        <button onclick="bukaAdminGate()" aria-label="Admin menu" class="flex items-center gap-1 text-[11px] text-ink/40 hover:text-ink/70 px-1 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-chili rounded">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H4a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H10a1.65 1.65 0 0 0 1-1.51V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V10a1.65 1.65 0 0 0 1.51 1H20a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+          </svg>
+          Admin
+        </button>
+      </div>
+
       <!-- category chips -->
       <div id="chip-row" class="chip-scroll flex gap-2 mt-4 overflow-x-auto"></div>
     </div>
@@ -211,10 +221,60 @@
     </div>
   </div>
 
+  <!-- ===== ADMIN PIN GATE ===== -->
+  <div id="admin-pin-modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-center justify-center px-5" role="dialog" aria-modal="true">
+    <div class="anim-pop bg-card w-full max-w-xs rounded-3xl p-6">
+      <h2 class="font-display font-semibold text-lg text-ink mb-1">Masuk Admin</h2>
+      <p class="text-xs text-ink/50 mb-4">Masukkan PIN untuk mengedit menu.</p>
+      <input type="password" id="admin-pin-input" inputmode="numeric" class="w-full p-3 border border-line rounded-xl bg-card text-center tracking-[0.3em] font-mono focus:outline-none focus:ring-2 focus:ring-chili" placeholder="••••" maxlength="8">
+      <p id="admin-pin-error" class="error-text text-center" style="display:none">PIN salah, coba lagi.</p>
+      <div class="flex gap-3 mt-4">
+        <button onclick="tutupAdminPin()" class="w-1/2 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">Batal</button>
+        <button onclick="cekPinAdmin()" class="w-1/2 bg-chili text-card py-3 rounded-xl font-bold hover:bg-chilidark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-chili">Masuk</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN MENU EDITOR ===== -->
+  <div id="admin-modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
+    <div class="anim-pop bg-card w-full max-w-md sm:rounded-3xl rounded-t-3xl max-h-[92vh] overflow-y-auto">
+
+      <div class="px-6 pt-6 pb-4 dashed-row border-t-0 flex items-start justify-between sticky top-0 bg-card z-10">
+        <div>
+          <p class="text-[11px] font-mono uppercase tracking-wide text-ink/40">Warung Kita</p>
+          <h2 id="admin-modal-title" class="font-display font-semibold text-xl text-ink">Kelola Menu</h2>
+        </div>
+        <button onclick="tutupAdmin()" aria-label="Tutup" class="text-ink/50 hover:text-ink text-xl leading-none p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-chili rounded">✕</button>
+      </div>
+
+      <div id="admin-list" class="px-6 py-4 space-y-3"></div>
+
+      <div class="px-6 pb-4">
+        <button onclick="tambahMenuBaru()" class="w-full border border-dashed border-line text-ink/60 hover:text-ink hover:border-ink/40 py-3 rounded-xl font-semibold text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">
+          + Tambah menu baru
+        </button>
+      </div>
+
+      <div class="px-6 pb-6 pt-2 sticky bottom-0 bg-card border-t border-line">
+        <div class="flex gap-3 pt-4">
+          <button onclick="resetMenuDefault()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">Reset</button>
+          <button onclick="simpanAdmin()" class="w-2/3 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-sage">
+            Simpan Perubahan
+          </button>
+        </div>
+        <p id="admin-save-error" class="error-text text-center" style="display:none">Periksa lagi: nama & harga tiap menu wajib diisi.</p>
+      </div>
+
+    </div>
+  </div>
+
 <script>
   const NOMOR_WA = "6282234650150"; // Nomor WhatsApp warung, format 62xxxxxxxxxx
 
-  const menuData = [
+  const ADMIN_PIN = "1234"; // Ganti PIN admin di sini
+  const MENU_STORAGE_KEY = "warungkita_menu_v1";
+
+  const DEFAULT_MENU_DATA = [
     { id: 1, kategori: "Makanan", nama: "Nasi Goreng Spesial", deskripsi: "Nasi goreng telur, ayam suwir, kerupuk & acar segar.", harga: 18000, spicy: true, variantLabel: "Tingkat pedas", variants: ["Pedas", "Sedang", "Tidak pedas"] },
     { id: 2, kategori: "Makanan", nama: "Mie Ayam Bakso", deskripsi: "Mie ayam kuah kaldu gurih dengan bakso sapi & pangsit.", harga: 16000, spicy: true, variantLabel: "Tingkat pedas", variants: ["Pedas", "Tidak pedas"] },
     { id: 3, kategori: "Makanan", nama: "Ayam Geprek Sambal Korek", deskripsi: "Ayam goreng tepung digeprek dengan sambal korek segar.", harga: 17000, spicy: true, variantLabel: "Level sambal", variants: ["Level 1 · Sedang", "Level 2 · Pedas", "Level 3 · Sangat pedas"] },
@@ -224,11 +284,33 @@
     { id: 7, kategori: "Minuman", nama: "Kopi Susu Gula Aren", deskripsi: "Espresso, susu segar, dan gula aren asli.", harga: 14000, spicy: false, variantLabel: "Sajian", variants: ["Dingin", "Hangat"] },
   ];
 
+  function muatMenuData() {
+    try {
+      const raw = localStorage.getItem(MENU_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length) return parsed;
+      }
+    } catch (e) { /* localStorage tidak tersedia / data rusak, pakai default */ }
+    return JSON.parse(JSON.stringify(DEFAULT_MENU_DATA));
+  }
+
+  function simpanMenuData() {
+    try {
+      localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuData));
+    } catch (e) { /* localStorage tidak tersedia, perubahan hanya berlaku sesi ini */ }
+  }
+
+  let menuData = muatMenuData();
+
   const KATEGORI = ["Semua", "Makanan", "Minuman"];
   let kategoriAktif = "Semua";
   let keranjang = [];
   const qtyKartu = {};
-  menuData.forEach(item => qtyKartu[item.id] = 1);
+  function pastikanQtyKartu() {
+    menuData.forEach(item => { if (!(item.id in qtyKartu)) qtyKartu[item.id] = 1; });
+  }
+  pastikanQtyKartu();
 
   function formatRupiah(n) {
     return "Rp " + n.toLocaleString("id-ID");
@@ -509,6 +591,179 @@
     } else {
       salinNota();
     }
+  }
+
+  // ===== ADMIN: kelola menu =====
+  let adminDraft = [];
+  let adminNextId = 1;
+
+  function bukaAdminGate() {
+    document.getElementById("admin-pin-modal").classList.remove("hidden");
+    document.getElementById("admin-pin-input").value = "";
+    document.getElementById("admin-pin-error").style.display = "none";
+    setTimeout(() => document.getElementById("admin-pin-input").focus(), 50);
+  }
+
+  function tutupAdminPin() {
+    document.getElementById("admin-pin-modal").classList.add("hidden");
+  }
+
+  function cekPinAdmin() {
+    const input = document.getElementById("admin-pin-input");
+    if (input.value === ADMIN_PIN) {
+      tutupAdminPin();
+      bukaAdmin();
+    } else {
+      document.getElementById("admin-pin-error").style.display = "block";
+      input.focus();
+      input.select();
+    }
+  }
+
+  function bukaAdmin() {
+    adminDraft = JSON.parse(JSON.stringify(menuData));
+    adminNextId = adminDraft.reduce((max, i) => Math.max(max, i.id), 0) + 1;
+    document.getElementById("admin-save-error").style.display = "none";
+    renderAdminList();
+    document.getElementById("admin-modal").classList.remove("hidden");
+  }
+
+  function tutupAdmin() {
+    document.getElementById("admin-modal").classList.add("hidden");
+  }
+
+  function renderAdminList() {
+    const container = document.getElementById("admin-list");
+    if (!adminDraft.length) {
+      container.innerHTML = `<p class="text-sm text-ink/50 text-center py-4">Belum ada menu. Tambahkan menu baru di bawah.</p>`;
+      return;
+    }
+    container.innerHTML = adminDraft.map((item, idx) => `
+      <div class="border border-line rounded-2xl p-4 space-y-3" data-admin-row="${idx}">
+        <div class="flex items-start gap-2">
+          <div class="flex-1 grid grid-cols-2 gap-2">
+            <div class="col-span-2">
+              <label class="text-[11px] text-ink/50 block mb-1">Nama menu</label>
+              <input type="text" data-field="nama" value="${escAttr(item.nama)}" class="w-full p-2.5 border border-line rounded-lg text-sm bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Nama menu">
+            </div>
+            <div>
+              <label class="text-[11px] text-ink/50 block mb-1">Kategori</label>
+              <select data-field="kategori" class="w-full p-2.5 border border-line rounded-lg text-sm bg-card focus:outline-none focus:ring-2 focus:ring-chili">
+                <option value="Makanan" ${item.kategori === "Makanan" ? "selected" : ""}>Makanan</option>
+                <option value="Minuman" ${item.kategori === "Minuman" ? "selected" : ""}>Minuman</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[11px] text-ink/50 block mb-1">Harga (Rp)</label>
+              <input type="number" min="0" step="500" data-field="harga" value="${item.harga}" class="w-full p-2.5 border border-line rounded-lg text-sm bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="0">
+            </div>
+          </div>
+          <button aria-label="Hapus menu" onclick="hapusMenuAdmin(${idx})" class="text-chili/70 hover:text-chili p-1.5 mt-5" title="Hapus menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+              <path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            </svg>
+          </button>
+        </div>
+
+        <div>
+          <label class="text-[11px] text-ink/50 block mb-1">Deskripsi</label>
+          <input type="text" data-field="deskripsi" value="${escAttr(item.deskripsi)}" class="w-full p-2.5 border border-line rounded-lg text-sm bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Deskripsi singkat">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[11px] text-ink/50 block mb-1">Label varian</label>
+            <input type="text" data-field="variantLabel" value="${escAttr(item.variantLabel)}" class="w-full p-2.5 border border-line rounded-lg text-sm bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Mis. Tingkat pedas">
+          </div>
+          <div>
+            <label class="text-[11px] text-ink/50 block mb-1">Pilihan varian (pisah koma)</label>
+            <input type="text" data-field="variants" value="${escAttr(item.variants.join(", "))}" class="w-full p-2.5 border border-line rounded-lg text-sm bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Pedas, Tidak pedas">
+          </div>
+        </div>
+
+        <label class="flex items-center gap-2 text-sm text-ink/70 cursor-pointer w-fit">
+          <input type="checkbox" data-field="spicy" ${item.spicy ? "checked" : ""} class="accent-chili w-4 h-4">
+          Tandai pedas 🌶️
+        </label>
+      </div>
+    `).join("");
+  }
+
+  function escAttr(str) {
+    return String(str ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  }
+
+  function bacaBarisAdmin(idx) {
+    const row = document.querySelector(`[data-admin-row="${idx}"]`);
+    return {
+      nama: row.querySelector('[data-field="nama"]').value.trim(),
+      kategori: row.querySelector('[data-field="kategori"]').value,
+      harga: Number(row.querySelector('[data-field="harga"]').value) || 0,
+      deskripsi: row.querySelector('[data-field="deskripsi"]').value.trim(),
+      variantLabel: row.querySelector('[data-field="variantLabel"]').value.trim() || "Pilihan",
+      variants: row.querySelector('[data-field="variants"]').value.split(",").map(v => v.trim()).filter(Boolean),
+      spicy: row.querySelector('[data-field="spicy"]').checked,
+    };
+  }
+
+  function tambahMenuBaru() {
+    adminDraft.push({
+      id: adminNextId++,
+      kategori: "Makanan",
+      nama: "",
+      deskripsi: "",
+      harga: 0,
+      spicy: false,
+      variantLabel: "Pilihan",
+      variants: ["Standar"],
+    });
+    renderAdminList();
+    const rows = document.querySelectorAll('[data-admin-row] [data-field="nama"]');
+    if (rows.length) rows[rows.length - 1].focus();
+  }
+
+  function hapusMenuAdmin(idx) {
+    adminDraft.splice(idx, 1);
+    renderAdminList();
+  }
+
+  function simpanAdmin() {
+    const rows = document.querySelectorAll("#admin-list [data-admin-row]");
+    const hasil = [];
+    let valid = true;
+
+    rows.forEach((row, idx) => {
+      const data = bacaBarisAdmin(idx);
+      if (!data.nama || data.harga <= 0) valid = false;
+      if (!data.variants.length) data.variants = ["Standar"];
+      hasil.push({ id: adminDraft[idx].id, ...data });
+    });
+
+    document.getElementById("admin-save-error").style.display = valid ? "none" : "block";
+    if (!valid) return;
+
+    const idBaru = new Set(hasil.map(i => i.id));
+
+    menuData = hasil;
+    pastikanQtyKartu();
+    simpanMenuData();
+
+    // buang item keranjang yang menunya sudah dihapus dari admin
+    keranjang = keranjang.filter(k => idBaru.has(k.menuId));
+
+    if (!KATEGORI.slice(1).some(k => menuData.some(i => i.kategori === k))) kategoriAktif = "Semua";
+    renderChips();
+    renderMenu();
+    renderCart();
+    tutupAdmin();
+    tampilkanToast("Menu berhasil disimpan.");
+  }
+
+  function resetMenuDefault() {
+    if (!confirm("Kembalikan menu ke daftar bawaan? Perubahan yang belum disimpan akan hilang.")) return;
+    adminDraft = JSON.parse(JSON.stringify(DEFAULT_MENU_DATA));
+    adminNextId = adminDraft.reduce((max, i) => Math.max(max, i.id), 0) + 1;
+    renderAdminList();
   }
 
   renderChips();
