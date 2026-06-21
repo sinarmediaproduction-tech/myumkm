@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Warung Kita — Pesan & Dapur</title>
+<title>Warung Kita — Pesan & Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,900;1,600&family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -51,8 +51,10 @@
   .error-text { color: #C1432A; font-size:12px; margin-top:4px; display:none; }
   .field-error .error-text { display:block; }
   .field-error input, .field-error textarea { border-color:#C1432A !important; }
-  .page { display: none; }
-  .page.active { display: block; }
+  .tab-btn { transition: all 0.2s; }
+  .tab-btn.active { background: #C1432A; color: white; border-color: #C1432A; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
   .status-badge { font-size:11px; padding:2px 10px; border-radius:20px; }
 </style>
 </head>
@@ -64,49 +66,34 @@
     <div class="flex items-center justify-between">
       <div>
         <h1 class="font-display italic font-semibold text-2xl text-ink leading-none">Warung Kita</h1>
-        <p class="text-xs text-ink/60 mt-1" id="subtitle">Resep rumah, dari dapur ke meja.</p>
+        <p class="text-xs text-ink/60 mt-1">Resep rumah, dari dapur ke meja.</p>
       </div>
       <div class="flex items-center gap-2">
         <span class="flex items-center gap-1.5 text-[11px] font-mono text-sage bg-sagelight px-2.5 py-1 rounded-full">
           <span class="w-1.5 h-1.5 rounded-full bg-sage"></span> Buka 08–21
         </span>
-        <button id="toggleModeBtn" onclick="toggleMode()" class="text-xs bg-ink/10 hover:bg-ink/20 px-3 py-1.5 rounded-full font-medium transition-colors">
-          👨‍🍳 Dapur
-        </button>
-        <button onclick="bukaAdminGate()" aria-label="Admin menu" class="text-[11px] text-ink/40 hover:text-ink/70 px-1 py-1 focus:outline-none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
+        <button onclick="bukaAdminGate()" aria-label="Admin" class="text-ink/40 hover:text-ink/70 p-1 focus:outline-none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H4a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H10a1.65 1.65 0 0 0 1-1.51V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V10a1.65 1.65 0 0 0 1.51 1H20a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
           </svg>
         </button>
       </div>
     </div>
-    <!-- category chips (hanya untuk customer) -->
+    <!-- category chips -->
     <div id="chip-row" class="chip-scroll flex gap-2 mt-4 overflow-x-auto"></div>
   </div>
 </header>
 
 <!-- ===== HALAMAN PELANGGAN ===== -->
-<div id="page-customer" class="page active max-w-md mx-auto px-5 pt-5">
+<main class="max-w-md mx-auto px-5 pt-5" id="page-customer">
   <div id="menu-container" class="grid grid-cols-1 gap-4"></div>
-</div>
-
-<!-- ===== HALAMAN DAPUR ===== -->
-<div id="page-kitchen" class="page max-w-md mx-auto px-5 pt-5">
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="font-display text-xl font-semibold">👨‍🍳 Dapur</h2>
-    <div class="text-sm text-ink/60">
-      <span id="pending-count">0</span> pending · total hari ini <span id="today-count">0</span>
-    </div>
-  </div>
-  <div id="order-list" class="space-y-3"></div>
-  <p id="empty-kitchen" class="text-center text-ink/40 text-sm py-8">Belum ada pesanan masuk.</p>
-</div>
+</main>
 
 <!-- ===== TOAST ===== -->
 <div id="toast" class="hidden fixed bottom-28 left-1/2 -translate-x-1/2 z-30 bg-ink text-paper text-sm font-medium px-4 py-2 rounded-full shadow-lg anim-toast" role="status"></div>
 
-<!-- ===== STICKY CHECKOUT BAR (customer) ===== -->
+<!-- ===== STICKY CHECKOUT BAR ===== -->
 <div class="fixed bottom-0 left-0 right-0 z-40" id="checkout-bar">
   <div class="max-w-md mx-auto">
     <div class="torn-edge bg-card border-t border-line rounded-t-3xl shadow-[0_-8px_24px_-8px_rgba(0,0,0,0.15)] px-5 pt-4">
@@ -115,7 +102,7 @@
         <div id="preview-list" class="space-y-2 overflow-y-auto pr-1" style="max-height:160px"></div>
       </div>
       <button id="btn-checkout" onclick="tampilkanRingkasan()" disabled
-        class="w-full flex items-center justify-between bg-chili disabled:bg-ink/20 disabled:cursor-not-allowed text-card font-semibold py-4 px-5 rounded-2xl mt-3 mb-4 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-chili">
+        class="w-full flex items-center justify-between bg-chili disabled:bg-ink/20 disabled:cursor-not-allowed text-card font-semibold py-4 px-5 rounded-2xl mt-3 mb-4 transition-colors">
         <span><span id="cart-count">0</span> item</span>
         <span class="font-mono" id="total-harga">Rp 0</span>
       </button>
@@ -202,8 +189,8 @@
 <!-- ===== ADMIN PIN GATE ===== -->
 <div id="admin-pin-modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-center justify-center px-5" role="dialog">
   <div class="anim-pop bg-card w-full max-w-xs rounded-3xl p-6">
-    <h2 class="font-display font-semibold text-lg text-ink mb-1">Masuk Admin</h2>
-    <p class="text-xs text-ink/50 mb-4">Masukkan PIN untuk mengedit menu.</p>
+    <h2 class="font-display font-semibold text-lg text-ink mb-1">Admin Panel</h2>
+    <p class="text-xs text-ink/50 mb-4">Masukkan PIN untuk mengelola pesanan & menu.</p>
     <input type="password" id="admin-pin-input" inputmode="numeric" class="w-full p-3 border border-line rounded-xl bg-card text-center tracking-[0.3em] font-mono focus:outline-none focus:ring-2 focus:ring-chili" placeholder="••••" maxlength="8">
     <p id="admin-pin-error" class="error-text text-center" style="display:none">PIN salah, coba lagi.</p>
     <div class="flex gap-3 mt-4">
@@ -213,33 +200,53 @@
   </div>
 </div>
 
-<!-- ===== ADMIN MENU EDITOR ===== -->
+<!-- ===== ADMIN PANEL (DAPUR + MENU) ===== -->
 <div id="admin-modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-end sm:items-center justify-center" role="dialog">
   <div class="anim-pop bg-card w-full max-w-md sm:rounded-3xl rounded-t-3xl max-h-[92vh] overflow-y-auto">
+    <!-- Header -->
     <div class="px-6 pt-6 pb-4 dashed-row border-t-0 flex items-start justify-between sticky top-0 bg-card z-10">
       <div>
         <p class="text-[11px] font-mono uppercase tracking-wide text-ink/40">Warung Kita</p>
-        <h2 class="font-display font-semibold text-xl text-ink">Kelola Menu</h2>
+        <h2 class="font-display font-semibold text-xl text-ink">Admin Panel</h2>
       </div>
       <button onclick="tutupAdmin()" class="text-ink/50 hover:text-ink text-xl leading-none p-1">✕</button>
     </div>
-    <div id="admin-list" class="px-6 py-4 space-y-3"></div>
-    <div class="px-6 pb-4">
-      <button onclick="tambahMenuBaru()" class="w-full border border-dashed border-line text-ink/60 hover:text-ink hover:border-ink/40 py-3 rounded-xl font-semibold text-sm">+ Tambah menu baru</button>
+
+    <!-- Tabs -->
+    <div class="px-6 pt-2 flex gap-2 border-b border-line">
+      <button class="tab-btn active px-4 py-2 text-sm font-semibold rounded-t-lg border border-b-0 border-line bg-card" data-tab="tab-orders">📋 Pesanan</button>
+      <button class="tab-btn px-4 py-2 text-sm font-semibold rounded-t-lg border border-b-0 border-line bg-card" data-tab="tab-menu">🍽️ Menu</button>
     </div>
-    <div class="px-6 pb-6 pt-2 sticky bottom-0 bg-card border-t border-line">
-      <div class="flex gap-3 pt-4">
+
+    <!-- Tab content: Pesanan -->
+    <div id="tab-orders" class="tab-content active px-6 py-4">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-sm text-ink/60">
+          <span id="pending-count-admin">0</span> pending · total hari ini <span id="today-count-admin">0</span>
+        </span>
+        <button onclick="refreshOrders()" class="text-xs text-sage underline">↻ refresh</button>
+      </div>
+      <div id="order-list-admin" class="space-y-3"></div>
+      <p id="empty-orders-admin" class="text-center text-ink/40 text-sm py-8">Belum ada pesanan masuk.</p>
+    </div>
+
+    <!-- Tab content: Menu -->
+    <div id="tab-menu" class="tab-content px-6 py-4">
+      <div id="admin-list" class="space-y-3"></div>
+      <button onclick="tambahMenuBaru()" class="w-full border border-dashed border-line text-ink/60 hover:text-ink hover:border-ink/40 py-3 rounded-xl font-semibold text-sm mt-3">+ Tambah menu baru</button>
+      <div class="mt-4 flex gap-3">
         <button onclick="resetMenuDefault()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line text-sm">Reset</button>
         <button onclick="simpanAdmin()" class="w-2/3 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold">Simpan Perubahan</button>
       </div>
       <p id="admin-save-error" class="error-text text-center" style="display:none">Periksa lagi: nama & harga tiap menu wajib diisi.</p>
     </div>
+
   </div>
 </div>
 
 <script>
   // ============================================================
-  // 1. KONFIGURASI
+  // 1. KONFIGURASI & DATA MENU
   // ============================================================
   const NOMOR_WA = "6282234650150";
   const ADMIN_PIN = "1234";
@@ -256,13 +263,7 @@
     { id: 7, kategori: "Minuman", nama: "Kopi Susu Gula Aren", deskripsi: "Espresso, susu segar, dan gula aren asli.", harga: 14000, spicy: false, variantLabel: "Sajian", variants: ["Dingin", "Hangat"] },
   ];
 
-  // ============================================================
-  // 2. MANAJEMEN MENU
-  // ============================================================
   let menuData = [];
-  const KATEGORI = ["Semua", "Makanan", "Minuman"];
-  let kategoriAktif = "Semua";
-
   function muatMenuData() {
     try {
       const raw = localStorage.getItem(MENU_STORAGE_KEY);
@@ -273,13 +274,13 @@
     } catch (e) {}
     return JSON.parse(JSON.stringify(DEFAULT_MENU_DATA));
   }
-
   function simpanMenuData() {
     try { localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuData)); } catch (e) {}
   }
-
   menuData = muatMenuData();
 
+  const KATEGORI = ["Semua", "Makanan", "Minuman"];
+  let kategoriAktif = "Semua";
   let keranjang = [];
   const qtyKartu = {};
   function pastikanQtyKartu() {
@@ -287,9 +288,10 @@
   }
   pastikanQtyKartu();
 
-  function formatRupiah(n) {
-    return "Rp " + n.toLocaleString("id-ID");
-  }
+  // ============================================================
+  // 2. FUNGSI MENU & KERANJANG (sama seperti sebelumnya)
+  // ============================================================
+  function formatRupiah(n) { return "Rp " + n.toLocaleString("id-ID"); }
 
   function iconFor(kategori) {
     if (kategori === "Minuman") {
@@ -304,7 +306,6 @@
       <path d="M12 3.2v2.2"/>
     </svg>`;
   }
-
   const flameIcon = `<svg viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5">
     <path d="M12 2.5c.9 2.7-2.6 3.7-2.6 7.4a2.7 2.7 0 0 0 5.4 0c0-.9-.9-1.8-.9-2.7.9.9 1.8 1.8 1.8 3.6a3.6 3.6 0 0 1-7.2 0c0-3.6 2.7-5.4 3.5-8.3Z"/>
   </svg>`;
@@ -352,9 +353,9 @@
             </select>
           </div>
           <div class="flex items-center border border-line rounded-lg overflow-hidden h-[42px]">
-            <button aria-label="Kurangi" onclick="ubahQtyKartu(${item.id}, -1)" class="w-9 h-full text-ink/60 hover:bg-paper">−</button>
+            <button onclick="ubahQtyKartu(${item.id}, -1)" class="w-9 h-full text-ink/60 hover:bg-paper">−</button>
             <span id="qty-display-${item.id}" class="w-8 text-center font-mono text-sm">${qtyKartu[item.id]}</span>
-            <button aria-label="Tambah" onclick="ubahQtyKartu(${item.id}, 1)" class="w-9 h-full text-ink/60 hover:bg-paper">+</button>
+            <button onclick="ubahQtyKartu(${item.id}, 1)" class="w-9 h-full text-ink/60 hover:bg-paper">+</button>
           </div>
         </div>
         <button onclick="tambahKeKeranjang(${item.id})"
@@ -539,7 +540,7 @@
   }
 
   // ============================================================
-  // 3. MANAJEMEN PESANAN (ORDER) UNTUK DAPUR
+  // 3. MANAJEMEN PESANAN (ORDER)
   // ============================================================
   function muatOrders() {
     try {
@@ -581,7 +582,7 @@
     if (idx !== -1) {
       orders[idx].status = newStatus;
       simpanOrders(orders);
-      renderDapur();
+      renderOrdersAdmin();
     }
   }
 
@@ -589,29 +590,29 @@
     let orders = muatOrders();
     orders = orders.filter(o => o.id !== orderId);
     simpanOrders(orders);
-    renderDapur();
+    renderOrdersAdmin();
   }
 
   // ============================================================
-  // 4. TAMPILAN DAPUR
+  // 4. TAMPILAN ADMIN: DAPUR (ORDER)
   // ============================================================
-  function renderDapur() {
+  function renderOrdersAdmin() {
     const orders = muatOrders();
     const sorted = [...orders].sort((a, b) => a.timestamp - b.timestamp);
     const pending = sorted.filter(o => o.status === 'pending');
     const today = new Date().toDateString();
     const todayOrders = orders.filter(o => new Date(o.timestamp).toDateString() === today);
 
-    document.getElementById('pending-count').textContent = pending.length;
-    document.getElementById('today-count').textContent = todayOrders.length;
+    document.getElementById('pending-count-admin').textContent = pending.length;
+    document.getElementById('today-count-admin').textContent = todayOrders.length;
 
-    const container = document.getElementById('order-list');
+    const container = document.getElementById('order-list-admin');
     if (sorted.length === 0) {
       container.innerHTML = '';
-      document.getElementById('empty-kitchen').style.display = 'block';
+      document.getElementById('empty-orders-admin').style.display = 'block';
       return;
     }
-    document.getElementById('empty-kitchen').style.display = 'none';
+    document.getElementById('empty-orders-admin').style.display = 'none';
 
     container.innerHTML = sorted.map(o => {
       const statusMap = {
@@ -659,6 +660,11 @@
     }).join('');
   }
 
+  function refreshOrders() {
+    renderOrdersAdmin();
+    tampilkanToast('🔄 Daftar pesanan diperbarui.');
+  }
+
   // ============================================================
   // 5. KIRIM KE WA + SIMPAN ORDER
   // ============================================================
@@ -691,47 +697,8 @@
   }
 
   // ============================================================
-  // 6. MODE TOGGLE (CUSTOMER / KITCHEN)
+  // 6. ADMIN PANEL (PIN GATE + TAB)
   // ============================================================
-  let currentMode = 'customer';
-
-  function toggleMode() {
-    const btn = document.getElementById('toggleModeBtn');
-    if (currentMode === 'customer') {
-      currentMode = 'kitchen';
-      btn.textContent = '🛒 Pesan';
-      document.getElementById('page-customer').classList.remove('active');
-      document.getElementById('page-kitchen').classList.add('active');
-      document.getElementById('chip-row').style.display = 'none';
-      document.getElementById('checkout-bar').style.display = 'none';
-      document.getElementById('subtitle').textContent = '👨‍🍳 Dashboard dapur';
-      renderDapur();
-      if (!window._pollInterval) {
-        window._pollInterval = setInterval(() => {
-          if (currentMode === 'kitchen') renderDapur();
-        }, 5000);
-      }
-    } else {
-      currentMode = 'customer';
-      btn.textContent = '👨‍🍳 Dapur';
-      document.getElementById('page-kitchen').classList.remove('active');
-      document.getElementById('page-customer').classList.add('active');
-      document.getElementById('chip-row').style.display = 'flex';
-      document.getElementById('checkout-bar').style.display = 'block';
-      document.getElementById('subtitle').textContent = 'Resep rumah, dari dapur ke meja.';
-      if (window._pollInterval) {
-        clearInterval(window._pollInterval);
-        window._pollInterval = null;
-      }
-    }
-  }
-
-  // ============================================================
-  // 7. ADMIN MENU EDITOR
-  // ============================================================
-  let adminDraft = [];
-  let adminNextId = 1;
-
   function bukaAdminGate() {
     document.getElementById("admin-pin-modal").classList.remove("hidden");
     document.getElementById("admin-pin-input").value = "";
@@ -756,18 +723,44 @@
   }
 
   function bukaAdmin() {
-    adminDraft = JSON.parse(JSON.stringify(menuData));
-    adminNextId = adminDraft.reduce((max, i) => Math.max(max, i.id), 0) + 1;
-    document.getElementById("admin-save-error").style.display = "none";
-    renderAdminList();
+    // reset tab ke "Pesanan"
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.tab-btn[data-tab="tab-orders"]').classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-orders').classList.add('active');
+
+    renderOrdersAdmin();
+    renderAdminList();  // menu list
     document.getElementById("admin-modal").classList.remove("hidden");
+    document.getElementById("admin-save-error").style.display = "none";
   }
 
   function tutupAdmin() {
     document.getElementById("admin-modal").classList.add("hidden");
   }
 
+  // Tab switching
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.tab-btn');
+    if (btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      // refresh orders jika tab pesanan
+      if (btn.dataset.tab === 'tab-orders') renderOrdersAdmin();
+    }
+  });
+
+  // ============================================================
+  // 7. ADMIN MENU EDITOR
+  // ============================================================
+  let adminDraft = [];
+  let adminNextId = 1;
+
   function renderAdminList() {
+    adminDraft = JSON.parse(JSON.stringify(menuData));
+    adminNextId = adminDraft.reduce((max, i) => Math.max(max, i.id), 0) + 1;
     const container = document.getElementById("admin-list");
     if (!adminDraft.length) {
       container.innerHTML = `<p class="text-sm text-ink/50 text-center py-4">Belum ada menu. Tambahkan menu baru di bawah.</p>`;
@@ -880,7 +873,7 @@
     renderChips();
     renderMenu();
     renderCart();
-    tutupAdmin();
+    renderAdminList(); // refresh list
     tampilkanToast("Menu berhasil disimpan.");
   }
 
@@ -897,6 +890,13 @@
   renderChips();
   renderMenu();
   renderCart();
+
+  // Auto-refresh order di admin setiap 10 detik jika admin panel terbuka
+  setInterval(() => {
+    if (!document.getElementById('admin-modal').classList.contains('hidden')) {
+      renderOrdersAdmin();
+    }
+  }, 10000);
 </script>
 </body>
 </html>
