@@ -184,8 +184,8 @@
       </div>
 
       <div id="view-nota" class="hidden px-6 py-5">
-        <p class="text-xs text-ink/50 mb-3">Ini pratinjau nota kamu. Kirim sebagai gambar ke WhatsApp, atau unduh dulu.</p>
-        <img id="nota-image" class="w-full rounded-xl border border-line shadow-sm" alt="Pratinjau nota pesanan">
+        <p class="text-xs text-ink/50 mb-3">Ini pratinjau nota kamu. Teksnya akan langsung terisi otomatis di chat WhatsApp.</p>
+        <pre id="nota-text-preview" class="w-full whitespace-pre-wrap font-mono text-[12px] leading-relaxed text-ink bg-paper rounded-xl border border-line p-4"></pre>
       </div>
 
       <div id="actions-form" class="px-6 pb-6 pt-2 flex gap-3 sticky bottom-0 bg-card">
@@ -198,40 +198,19 @@
       <div id="actions-nota" class="hidden px-6 pb-6 pt-2 sticky bottom-0 bg-card">
         <button onclick="kembaliKeForm()" class="text-xs text-ink/50 underline mb-3 focus:outline-none">← Edit pesanan</button>
         <div class="flex gap-3">
-          <button onclick="unduhNota()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">Unduh</button>
+          <button onclick="salinNota()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">Salin</button>
           <button onclick="kirimKeWarung()" class="w-2/3 flex items-center justify-center gap-2 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-sage">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.42 1.27 4.86L2 22l5.34-1.31a9.9 9.9 0 0 0 4.7 1.2h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2Zm5.84 14.1c-.25.7-1.45 1.34-1.99 1.4-.51.06-1.04.09-3.36-.86-2.83-1.16-4.65-4.05-4.79-4.24-.14-.18-1.14-1.51-1.14-2.88s.72-2.04.97-2.32c.25-.28.55-.35.74-.35.18 0 .37 0 .53.01.17.01.4-.06.62.48.25.6.84 2.07.91 2.22.07.15.12.33.02.52-.32.62-.65.86-.9 1.16-.16.19-.3.38-.13.69.61 1.16 1.31 1.9 2.25 2.62.96.73 1.6.97 1.85 1.06.21.08.36.06.5-.07.18-.18.55-.66.7-.88.15-.22.3-.18.5-.11.21.07 1.32.66 1.55.78.23.12.38.18.43.28.06.1.06.56-.19 1.26Z"/></svg>
             Kirim ke Warung
           </button>
         </div>
-        <p class="text-[11px] text-ink/40 mt-2 leading-relaxed">Chat ke warung akan terbuka otomatis. Foto nota sudah terunduh — tinggal tap ikon lampiran di chat itu untuk melampirkannya.</p>
+        <p class="text-[11px] text-ink/40 mt-2 leading-relaxed">Chat WhatsApp akan terbuka otomatis dengan teks nota yang sudah terisi — tinggal tap kirim.</p>
         <button onclick="bagikanLain()" id="btn-bagikan-lain" class="text-xs text-ink/50 underline mt-3 focus:outline-none">Atau bagikan ke aplikasi lain</button>
       </div>
 
     </div>
   </div>
 
-  <!-- ===== NOTA TEMPLATE (off-screen, captured as image) ===== -->
-  <div id="nota-template" style="position:absolute; left:-9999px; top:0; width:380px;" class="bg-card font-mono text-ink">
-    <div class="p-7">
-      <div class="text-center mb-4">
-        <p class="font-display font-bold text-lg tracking-wide">WARUNG KITA</p>
-        <p class="text-[11px] text-ink/60">Resep rumah, dari dapur ke meja</p>
-        <p class="text-[10px] text-ink/40 mt-1" id="nota-tanggal"></p>
-      </div>
-      <div class="border-t border-dashed border-ink/30 my-3"></div>
-      <div id="nota-items" class="space-y-2 text-[12px]"></div>
-      <div class="border-t border-dashed border-ink/30 my-3"></div>
-      <div class="flex justify-between font-bold text-[13px]">
-        <span>TOTAL</span><span id="nota-total"></span>
-      </div>
-      <div class="border-t border-dashed border-ink/30 my-3"></div>
-      <div class="text-[12px] space-y-2" id="nota-info"></div>
-      <p class="text-center text-[11px] italic text-ink/50 mt-5">Terima kasih sudah memesan!</p>
-    </div>
-  </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
   const NOMOR_WA = "6282234650150"; // Nomor WhatsApp warung, format 62xxxxxxxxxx
 
@@ -461,67 +440,43 @@
     return valid;
   }
 
-  let notaBlob = null;
+  let notaText = "";
 
-  function renderNotaTemplate() {
+  function buatTeksNota() {
     const nama = document.getElementById("nama-user").value.trim();
     const metode = document.querySelector('input[name="metode"]:checked').value;
     const alamat = document.getElementById("alamat-user").value.trim();
     const catatan = document.getElementById("catatan-user").value.trim();
     const total = keranjang.reduce((s, i) => s + i.harga * i.jumlah, 0);
+    const tanggal = new Date().toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+    const garis = "------------------------------";
 
-    document.getElementById("nota-tanggal").innerText =
-      new Date().toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+    const baris = keranjang.map(item =>
+      `${item.nama}\n  ${item.varian} x${item.jumlah}` +
+      `${" ".repeat(Math.max(1, 22 - (`${item.varian} x${item.jumlah}`).length))}${formatRupiah(item.harga * item.jumlah)}`
+    ).join("\n\n");
 
-    document.getElementById("nota-items").innerHTML = keranjang.map(item => `
-      <div>
-        <div class="flex justify-between"><span>${item.nama}</span></div>
-        <div class="flex justify-between text-ink/60">
-          <span>${item.varian} · x${item.jumlah}</span>
-          <span class="text-ink">${formatRupiah(item.harga * item.jumlah)}</span>
-        </div>
-      </div>
-    `).join("");
+    let teks = `*WARUNG KITA*\nResep rumah, dari dapur ke meja\n${tanggal}\n${garis}\n${baris}\n${garis}\n*TOTAL: ${formatRupiah(total)}*\n\nNama: ${nama}\nMetode: ${metode === "diantar" ? "Diantar" : "Ambil sendiri"}`;
 
-    document.getElementById("nota-total").innerText = formatRupiah(total);
-
-    let infoHtml = `
-      <div class="flex justify-between"><span class="text-ink/50">Nama</span><span>${nama}</span></div>
-      <div class="flex justify-between"><span class="text-ink/50">Metode</span><span>${metode === "diantar" ? "Diantar" : "Ambil sendiri"}</span></div>
-    `;
     if (metode === "diantar") {
-      infoHtml += `<div><span class="text-ink/50 block">Alamat</span><span>${alamat}</span></div>`;
+      teks += `\nAlamat: ${alamat}`;
     }
     if (catatan) {
-      infoHtml += `<div><span class="text-ink/50 block">Catatan</span><span>${catatan}</span></div>`;
+      teks += `\nCatatan: ${catatan}`;
     }
-    document.getElementById("nota-info").innerHTML = infoHtml;
+    teks += `\n\nTerima kasih sudah memesan! 🙏`;
+
+    return teks;
   }
 
-  async function buatNota() {
+  function buatNota() {
     if (!validateForm()) return;
-    renderNotaTemplate();
-
-    const btn = document.getElementById("btn-buat-nota");
-    btn.disabled = true;
-    btn.innerText = "Membuat nota...";
-
-    try {
-      const node = document.getElementById("nota-template");
-      const canvas = await html2canvas(node, { scale: 2, backgroundColor: "#FFFCF6" });
-      const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
-      notaBlob = blob;
-      document.getElementById("nota-image").src = URL.createObjectURL(blob);
-      document.getElementById("view-form").classList.add("hidden");
-      document.getElementById("view-nota").classList.remove("hidden");
-      document.getElementById("actions-form").classList.add("hidden");
-      document.getElementById("actions-nota").classList.remove("hidden");
-    } catch (e) {
-      tampilkanToast("Gagal membuat nota, coba lagi.");
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Buat Nota";
-    }
+    notaText = buatTeksNota();
+    document.getElementById("nota-text-preview").innerText = notaText;
+    document.getElementById("view-form").classList.add("hidden");
+    document.getElementById("view-nota").classList.remove("hidden");
+    document.getElementById("actions-form").classList.add("hidden");
+    document.getElementById("actions-nota").classList.remove("hidden");
   }
 
   function kembaliKeForm() {
@@ -531,35 +486,28 @@
     document.getElementById("actions-form").classList.remove("hidden");
   }
 
-  function unduhNota() {
-    if (!notaBlob) return;
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(notaBlob);
-    a.download = "nota-pesanan.png";
-    a.click();
+  function salinNota() {
+    if (!notaText) return;
+    navigator.clipboard.writeText(notaText)
+      .then(() => tampilkanToast("Teks nota disalin."))
+      .catch(() => tampilkanToast("Gagal menyalin, coba lagi."));
   }
 
   function kirimKeWarung() {
-    if (!notaBlob) return;
-    // Selalu unduh notanya dulu, lalu buka chat ke NOMOR_WA — jadi tujuannya
-    // dijamin nomor warung yang sudah diatur, bukan dipilih bebas lewat share sheet.
-    unduhNota();
-    const pesan = "Halo, saya sudah memesan. Nota pesanan baru saja saya unduh, mohon dilampirkan di chat ini ya 🙏";
-    window.open(`https://wa.me/${NOMOR_WA}?text=${encodeURIComponent(pesan)}`, "_blank");
+    if (!notaText) return;
+    window.open(`https://wa.me/${NOMOR_WA}?text=${encodeURIComponent(notaText)}`, "_blank");
   }
 
   async function bagikanLain() {
-    if (!notaBlob) return;
-    const file = new File([notaBlob], "nota-pesanan.png", { type: "image/png" });
-
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    if (!notaText) return;
+    if (navigator.share) {
       try {
-        await navigator.share({ files: [file], title: "Nota Pesanan", text: "Pesanan dari Warung Kita" });
+        await navigator.share({ title: "Nota Pesanan", text: notaText });
       } catch (e) {
         // dibatalkan oleh pengguna, tidak perlu tindakan lanjutan
       }
     } else {
-      tampilkanToast("Berbagi file tidak didukung di browser ini — gunakan tombol Unduh.");
+      salinNota();
     }
   }
 
