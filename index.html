@@ -1,28 +1,22 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Warung Kita — Pesan Online</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,900;1,600&family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Warung Kita — Pesan & Dapur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,900;1,600&family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
     theme: {
       extend: {
         colors: {
-          paper: '#F3ECDA',
-          card: '#FFFCF6',
-          ink: '#2A211B',
-          chili: '#C1432A',
-          chilidark: '#9E3420',
-          turmeric: '#E3A23C',
-          turmericlight: '#F6E2BD',
-          sage: '#5F7A52',
-          sagedark: '#46603B',
-          sagelight: '#DCE6D5',
+          paper: '#F3ECDA', card: '#FFFCF6', ink: '#2A211B',
+          chili: '#C1432A', chilidark: '#9E3420',
+          turmeric: '#E3A23C', turmericlight: '#F6E2BD',
+          sage: '#5F7A52', sagedark: '#46603B', sagelight: '#DCE6D5',
           line: '#E3D5B8',
         },
         fontFamily: {
@@ -36,247 +30,221 @@
 </script>
 <style>
   :root { --paper: #F3ECDA; }
-  html, body { font-family: 'Plus Jakarta Sans', sans-serif; }
-  body { background-color: var(--paper); color: #2A211B; }
-
+  html, body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--paper); color: #2A211B; }
   .torn-edge { position: relative; }
   .torn-edge::before {
     content: "";
-    position: absolute;
-    top: -9px; left: 0; right: 0; height: 10px;
+    position: absolute; top: -9px; left: 0; right: 0; height: 10px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cpath d='M0 10 L10 0 L20 10 Z' fill='%23F3ECDA'/%3E%3C/svg%3E");
-    background-size: 20px 10px;
-    background-repeat: repeat-x;
+    background-size: 20px 10px; background-repeat: repeat-x;
   }
-
   .dashed-row { border-top: 1px dashed #E3D5B8; }
   .chip-scroll::-webkit-scrollbar { display: none; }
   .chip-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-
   .drawer { max-height: 0; overflow: hidden; transition: max-height .28s ease; }
   .drawer.open { max-height: 240px; }
-
-  @keyframes pop-in {
-    from { opacity: 0; transform: translateY(10px) scale(.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  @keyframes toast-in {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes pop-in { from { opacity:0; transform:translateY(10px) scale(.98); } to { opacity:1; transform:translateY(0) scale(1); } }
+  @keyframes toast-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
   .anim-pop { animation: pop-in .22s ease-out; }
   .anim-toast { animation: toast-in .2s ease-out; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .drawer { transition: none; }
-    .anim-pop, .anim-toast { animation: none; }
-  }
-
-  .error-text { color: #C1432A; font-size: 12px; margin-top: 4px; display: none; }
-  .field-error .error-text { display: block; }
-  .field-error input, .field-error textarea { border-color: #C1432A !important; }
+  @media (prefers-reduced-motion: reduce) { .drawer { transition: none; } .anim-pop, .anim-toast { animation: none; } }
+  .error-text { color: #C1432A; font-size:12px; margin-top:4px; display:none; }
+  .field-error .error-text { display:block; }
+  .field-error input, .field-error textarea { border-color:#C1432A !important; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .status-badge { font-size:11px; padding:2px 10px; border-radius:20px; }
 </style>
 </head>
 <body class="pb-32">
 
-  <!-- ===== HEADER ===== -->
-  <header class="sticky top-0 z-20 bg-paper/95 backdrop-blur-sm border-b border-line">
-    <div class="max-w-md mx-auto px-5 pt-5 pb-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="font-display italic font-semibold text-2xl text-ink leading-none">Warung Kita</h1>
-          <p class="text-xs text-ink/60 mt-1">Resep rumah, dari dapur ke meja.</p>
-        </div>
+<!-- ===== HEADER ===== -->
+<header class="sticky top-0 z-20 bg-paper/95 backdrop-blur-sm border-b border-line">
+  <div class="max-w-md mx-auto px-5 pt-5 pb-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="font-display italic font-semibold text-2xl text-ink leading-none">Warung Kita</h1>
+        <p class="text-xs text-ink/60 mt-1" id="subtitle">Resep rumah, dari dapur ke meja.</p>
+      </div>
+      <div class="flex items-center gap-2">
         <span class="flex items-center gap-1.5 text-[11px] font-mono text-sage bg-sagelight px-2.5 py-1 rounded-full">
           <span class="w-1.5 h-1.5 rounded-full bg-sage"></span> Buka 08–21
         </span>
-      </div>
-
-      <div class="flex justify-end mt-1">
-        <button onclick="bukaAdminGate()" aria-label="Admin menu" class="flex items-center gap-1 text-[11px] text-ink/40 hover:text-ink/70 px-1 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-chili rounded">
+        <button id="toggleModeBtn" onclick="toggleMode()" class="text-xs bg-ink/10 hover:bg-ink/20 px-3 py-1.5 rounded-full font-medium transition-colors">
+          👨‍🍳 Dapur
+        </button>
+        <button onclick="bukaAdminGate()" aria-label="Admin menu" class="text-[11px] text-ink/40 hover:text-ink/70 px-1 py-1 focus:outline-none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H4a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H10a1.65 1.65 0 0 0 1-1.51V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V10a1.65 1.65 0 0 0 1.51 1H20a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
           </svg>
-          Admin
-        </button>
-      </div>
-
-      <!-- category chips -->
-      <div id="chip-row" class="chip-scroll flex gap-2 mt-4 overflow-x-auto"></div>
-    </div>
-  </header>
-
-  <!-- ===== MENU ===== -->
-  <main class="max-w-md mx-auto px-5 pt-5 grid grid-cols-1 gap-4" id="menu-container" aria-live="polite"></main>
-
-  <!-- ===== TOAST ===== -->
-  <div id="toast" class="hidden fixed bottom-28 left-1/2 -translate-x-1/2 z-30 bg-ink text-paper text-sm font-medium px-4 py-2 rounded-full shadow-lg anim-toast" role="status" aria-live="polite"></div>
-
-  <!-- ===== STICKY CHECKOUT BAR ===== -->
-  <div class="fixed bottom-0 left-0 right-0 z-40">
-    <div class="max-w-md mx-auto">
-      <div class="torn-edge bg-card border-t border-line rounded-t-3xl shadow-[0_-8px_24px_-8px_rgba(0,0,0,0.15)] px-5 pt-4">
-
-        <div id="drawer" class="drawer">
-          <p class="text-[11px] font-mono uppercase tracking-wide text-ink/40 mb-2">Pesanan kamu</p>
-          <div id="preview-list" class="space-y-2 overflow-y-auto pr-1" style="max-height:160px"></div>
-        </div>
-
-        <button id="btn-checkout" onclick="tampilkanRingkasan()" disabled
-          class="w-full flex items-center justify-between bg-chili disabled:bg-ink/20 disabled:cursor-not-allowed text-card font-semibold py-4 px-5 rounded-2xl mt-3 mb-4 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-chili">
-          <span><span id="cart-count">0</span> item</span>
-          <span class="font-mono" id="total-harga">Rp 0</span>
         </button>
       </div>
     </div>
+    <!-- category chips (hanya untuk customer) -->
+    <div id="chip-row" class="chip-scroll flex gap-2 mt-4 overflow-x-auto"></div>
   </div>
+</header>
 
-  <!-- ===== MODAL ===== -->
-  <div id="modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="anim-pop bg-card w-full max-w-md sm:rounded-3xl rounded-t-3xl max-h-[92vh] overflow-y-auto">
+<!-- ===== HALAMAN PELANGGAN ===== -->
+<div id="page-customer" class="page active max-w-md mx-auto px-5 pt-5">
+  <div id="menu-container" class="grid grid-cols-1 gap-4"></div>
+</div>
 
-      <div class="px-6 pt-6 pb-4 dashed-row border-t-0">
-        <div class="flex items-start justify-between">
-          <div>
-            <p class="text-[11px] font-mono uppercase tracking-wide text-ink/40">Warung Kita</p>
-            <h2 id="modal-title" class="font-display font-semibold text-xl text-ink">Struk pesanan</h2>
-          </div>
-          <button onclick="toggleModal(false)" aria-label="Tutup" class="text-ink/50 hover:text-ink text-xl leading-none p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-chili rounded">✕</button>
-        </div>
-      </div>
-
-      <div id="view-form">
-        <div class="px-6 py-4 dashed-row">
-          <div id="ringkasan-list" class="space-y-3"></div>
-          <div class="dashed-row mt-4 pt-3 flex items-center justify-between">
-            <span class="font-semibold text-ink">Total</span>
-            <span class="font-mono font-semibold text-lg text-chili" id="total-modal">Rp 0</span>
-          </div>
-        </div>
-
-        <div class="px-6 py-5 space-y-4">
-
-          <div>
-            <p class="text-xs font-semibold text-ink/70 mb-2">Cara pesanan diterima</p>
-            <div class="grid grid-cols-2 gap-2">
-              <label class="flex items-center justify-center gap-2 border border-line rounded-xl py-2.5 text-sm cursor-pointer has-[:checked]:border-chili has-[:checked]:bg-turmericlight/50 has-[:checked]:text-chili font-medium">
-                <input type="radio" name="metode" value="diantar" checked onchange="updateMetode()" class="accent-chili">
-                Diantar
-              </label>
-              <label class="flex items-center justify-center gap-2 border border-line rounded-xl py-2.5 text-sm cursor-pointer has-[:checked]:border-chili has-[:checked]:bg-turmericlight/50 has-[:checked]:text-chili font-medium">
-                <input type="radio" name="metode" value="ditempat" onchange="updateMetode()" class="accent-chili">
-                Makan di tempat
-              </label>
-            </div>
-          </div>
-
-          <div id="field-nama">
-            <label for="nama-user" class="text-xs font-semibold text-ink/70 mb-1 block">Nama</label>
-            <input type="text" id="nama-user" class="w-full p-3 border border-line rounded-xl bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Nama kamu">
-            <p class="error-text">Mohon isi nama dulu, ya.</p>
-          </div>
-
-          <div id="field-alamat">
-            <label for="alamat-user" class="text-xs font-semibold text-ink/70 mb-1 block">Alamat pengiriman</label>
-            <textarea id="alamat-user" class="w-full p-3 border border-line rounded-xl bg-card focus:outline-none focus:ring-2 focus:ring-chili" rows="2" placeholder="Jalan, nomor rumah, patokan"></textarea>
-            <p class="error-text">Mohon isi alamat pengiriman.</p>
-          </div>
-
-          <div id="field-meja" class="hidden">
-            <label for="meja-user" class="text-xs font-semibold text-ink/70 mb-1 block">Nomor Meja</label>
-            <input type="text" id="meja-user" class="w-full p-3 border border-line rounded-xl bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Contoh: 5, 7A">
-            <p class="error-text">Mohon isi nomor meja.</p>
-          </div>
-
-          <div>
-            <label for="catatan-user" class="text-xs font-semibold text-ink/70 mb-1 block">Catatan <span class="text-ink/40 font-normal">(opsional)</span></label>
-            <textarea id="catatan-user" class="w-full p-3 border border-line rounded-xl bg-card focus:outline-none focus:ring-2 focus:ring-chili" rows="2" placeholder="Contoh: tanpa bawang, sambal dipisah"></textarea>
-          </div>
-
-        </div>
-      </div>
-
-      <div id="view-nota" class="hidden px-6 py-5">
-        <p class="text-xs text-ink/50 mb-3">Ini pratinjau nota kamu. Teksnya akan langsung terisi otomatis di chat WhatsApp.</p>
-        <pre id="nota-text-preview" class="w-full whitespace-pre-wrap font-mono text-[12px] leading-relaxed text-ink bg-paper rounded-xl border border-line p-4"></pre>
-      </div>
-
-      <div id="actions-form" class="px-6 pb-6 pt-2 flex gap-3 sticky bottom-0 bg-card">
-        <button onclick="toggleModal(false)" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">Batal</button>
-        <button id="btn-buat-nota" onclick="buatNota()" class="w-2/3 flex items-center justify-center gap-2 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-sage disabled:opacity-60">
-          Buat Nota
-        </button>
-      </div>
-
-      <div id="actions-nota" class="hidden px-6 pb-6 pt-2 sticky bottom-0 bg-card">
-        <button onclick="kembaliKeForm()" class="text-xs text-ink/50 underline mb-3 focus:outline-none">← Edit pesanan</button>
-        <div class="flex gap-3">
-          <button onclick="salinNota()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">Salin</button>
-          <button onclick="kirimKeWarung()" class="w-2/3 flex items-center justify-center gap-2 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-sage">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.42 1.27 4.86L2 22l5.34-1.31a9.9 9.9 0 0 0 4.7 1.2h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2Zm5.84 14.1c-.25.7-1.45 1.34-1.99 1.4-.51.06-1.04.09-3.36-.86-2.83-1.16-4.65-4.05-4.79-4.24-.14-.18-1.14-1.51-1.14-2.88s.72-2.04.97-2.32c.25-.28.55-.35.74-.35.18 0 .37 0 .53.01.17.01.4-.06.62.48.25.6.84 2.07.91 2.22.07.15.12.33.02.52-.32.62-.65.86-.9 1.16-.16.19-.3.38-.13.69.61 1.16 1.31 1.9 2.25 2.62.96.73 1.6.97 1.85 1.06.21.08.36.06.5-.07.18-.18.55-.66.7-.88.15-.22.3-.18.5-.11.21.07 1.32.66 1.55.78.23.12.38.18.43.28.06.1.06.56-.19 1.26Z"/></svg>
-            Kirim ke Warung
-          </button>
-        </div>
-        <p class="text-[11px] text-ink/40 mt-2 leading-relaxed">Chat WhatsApp akan terbuka otomatis dengan teks nota yang sudah terisi — tinggal tap kirim.</p>
-        <button onclick="bagikanLain()" id="btn-bagikan-lain" class="text-xs text-ink/50 underline mt-3 focus:outline-none">Atau bagikan ke aplikasi lain</button>
-      </div>
-
+<!-- ===== HALAMAN DAPUR ===== -->
+<div id="page-kitchen" class="page max-w-md mx-auto px-5 pt-5">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="font-display text-xl font-semibold">👨‍🍳 Dapur</h2>
+    <div class="text-sm text-ink/60">
+      <span id="pending-count">0</span> pending · total hari ini <span id="today-count">0</span>
     </div>
   </div>
+  <div id="order-list" class="space-y-3"></div>
+  <p id="empty-kitchen" class="text-center text-ink/40 text-sm py-8">Belum ada pesanan masuk.</p>
+</div>
 
-  <!-- ===== ADMIN PIN GATE ===== -->
-  <div id="admin-pin-modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-center justify-center px-5" role="dialog" aria-modal="true">
-    <div class="anim-pop bg-card w-full max-w-xs rounded-3xl p-6">
-      <h2 class="font-display font-semibold text-lg text-ink mb-1">Masuk Admin</h2>
-      <p class="text-xs text-ink/50 mb-4">Masukkan PIN untuk mengedit menu.</p>
-      <input type="password" id="admin-pin-input" inputmode="numeric" class="w-full p-3 border border-line rounded-xl bg-card text-center tracking-[0.3em] font-mono focus:outline-none focus:ring-2 focus:ring-chili" placeholder="••••" maxlength="8">
-      <p id="admin-pin-error" class="error-text text-center" style="display:none">PIN salah, coba lagi.</p>
-      <div class="flex gap-3 mt-4">
-        <button onclick="tutupAdminPin()" class="w-1/2 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">Batal</button>
-        <button onclick="cekPinAdmin()" class="w-1/2 bg-chili text-card py-3 rounded-xl font-bold hover:bg-chilidark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-chili">Masuk</button>
+<!-- ===== TOAST ===== -->
+<div id="toast" class="hidden fixed bottom-28 left-1/2 -translate-x-1/2 z-30 bg-ink text-paper text-sm font-medium px-4 py-2 rounded-full shadow-lg anim-toast" role="status"></div>
+
+<!-- ===== STICKY CHECKOUT BAR (customer) ===== -->
+<div class="fixed bottom-0 left-0 right-0 z-40" id="checkout-bar">
+  <div class="max-w-md mx-auto">
+    <div class="torn-edge bg-card border-t border-line rounded-t-3xl shadow-[0_-8px_24px_-8px_rgba(0,0,0,0.15)] px-5 pt-4">
+      <div id="drawer" class="drawer">
+        <p class="text-[11px] font-mono uppercase tracking-wide text-ink/40 mb-2">Pesanan kamu</p>
+        <div id="preview-list" class="space-y-2 overflow-y-auto pr-1" style="max-height:160px"></div>
       </div>
+      <button id="btn-checkout" onclick="tampilkanRingkasan()" disabled
+        class="w-full flex items-center justify-between bg-chili disabled:bg-ink/20 disabled:cursor-not-allowed text-card font-semibold py-4 px-5 rounded-2xl mt-3 mb-4 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-chili">
+        <span><span id="cart-count">0</span> item</span>
+        <span class="font-mono" id="total-harga">Rp 0</span>
+      </button>
     </div>
   </div>
+</div>
 
-  <!-- ===== ADMIN MENU EDITOR ===== -->
-  <div id="admin-modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
-    <div class="anim-pop bg-card w-full max-w-md sm:rounded-3xl rounded-t-3xl max-h-[92vh] overflow-y-auto">
-
-      <div class="px-6 pt-6 pb-4 dashed-row border-t-0 flex items-start justify-between sticky top-0 bg-card z-10">
+<!-- ===== MODAL CHECKOUT ===== -->
+<div id="modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-end sm:items-center justify-center" role="dialog">
+  <div class="anim-pop bg-card w-full max-w-md sm:rounded-3xl rounded-t-3xl max-h-[92vh] overflow-y-auto">
+    <div class="px-6 pt-6 pb-4 dashed-row border-t-0">
+      <div class="flex items-start justify-between">
         <div>
           <p class="text-[11px] font-mono uppercase tracking-wide text-ink/40">Warung Kita</p>
-          <h2 id="admin-modal-title" class="font-display font-semibold text-xl text-ink">Kelola Menu</h2>
+          <h2 class="font-display font-semibold text-xl text-ink">Struk pesanan</h2>
         </div>
-        <button onclick="tutupAdmin()" aria-label="Tutup" class="text-ink/50 hover:text-ink text-xl leading-none p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-chili rounded">✕</button>
+        <button onclick="toggleModal(false)" class="text-ink/50 hover:text-ink text-xl leading-none p-1">✕</button>
       </div>
-
-      <div id="admin-list" class="px-6 py-4 space-y-3"></div>
-
-      <div class="px-6 pb-4">
-        <button onclick="tambahMenuBaru()" class="w-full border border-dashed border-line text-ink/60 hover:text-ink hover:border-ink/40 py-3 rounded-xl font-semibold text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">
-          + Tambah menu baru
+    </div>
+    <div id="view-form">
+      <div class="px-6 py-4 dashed-row">
+        <div id="ringkasan-list" class="space-y-3"></div>
+        <div class="dashed-row mt-4 pt-3 flex items-center justify-between">
+          <span class="font-semibold text-ink">Total</span>
+          <span class="font-mono font-semibold text-lg text-chili" id="total-modal">Rp 0</span>
+        </div>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <div>
+          <p class="text-xs font-semibold text-ink/70 mb-2">Cara pesanan diterima</p>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center justify-center gap-2 border border-line rounded-xl py-2.5 text-sm cursor-pointer has-[:checked]:border-chili has-[:checked]:bg-turmericlight/50 font-medium">
+              <input type="radio" name="metode" value="diantar" checked onchange="updateMetode()" class="accent-chili"> Diantar
+            </label>
+            <label class="flex items-center justify-center gap-2 border border-line rounded-xl py-2.5 text-sm cursor-pointer has-[:checked]:border-chili has-[:checked]:bg-turmericlight/50 font-medium">
+              <input type="radio" name="metode" value="ditempat" onchange="updateMetode()" class="accent-chili"> Makan di tempat
+            </label>
+          </div>
+        </div>
+        <div id="field-nama">
+          <label class="text-xs font-semibold text-ink/70 mb-1 block">Nama</label>
+          <input type="text" id="nama-user" class="w-full p-3 border border-line rounded-xl bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Nama kamu">
+          <p class="error-text">Mohon isi nama dulu, ya.</p>
+        </div>
+        <div id="field-alamat">
+          <label class="text-xs font-semibold text-ink/70 mb-1 block">Alamat pengiriman</label>
+          <textarea id="alamat-user" class="w-full p-3 border border-line rounded-xl bg-card focus:outline-none focus:ring-2 focus:ring-chili" rows="2" placeholder="Jalan, nomor rumah, patokan"></textarea>
+          <p class="error-text">Mohon isi alamat pengiriman.</p>
+        </div>
+        <div id="field-meja" class="hidden">
+          <label class="text-xs font-semibold text-ink/70 mb-1 block">Nomor Meja</label>
+          <input type="text" id="meja-user" class="w-full p-3 border border-line rounded-xl bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Contoh: 5, 7A">
+          <p class="error-text">Mohon isi nomor meja.</p>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-ink/70 mb-1 block">Catatan <span class="text-ink/40 font-normal">(opsional)</span></label>
+          <textarea id="catatan-user" class="w-full p-3 border border-line rounded-xl bg-card focus:outline-none focus:ring-2 focus:ring-chili" rows="2" placeholder="Contoh: tanpa bawang, sambal dipisah"></textarea>
+        </div>
+      </div>
+    </div>
+    <div id="view-nota" class="hidden px-6 py-5">
+      <p class="text-xs text-ink/50 mb-3">Pratinjau nota. Teks akan dikirim ke WhatsApp.</p>
+      <pre id="nota-text-preview" class="w-full whitespace-pre-wrap font-mono text-[12px] leading-relaxed text-ink bg-paper rounded-xl border border-line p-4"></pre>
+    </div>
+    <div id="actions-form" class="px-6 pb-6 pt-2 flex gap-3 sticky bottom-0 bg-card">
+      <button onclick="toggleModal(false)" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line">Batal</button>
+      <button onclick="buatNota()" class="w-2/3 flex items-center justify-center gap-2 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold">Buat Nota</button>
+    </div>
+    <div id="actions-nota" class="hidden px-6 pb-6 pt-2 sticky bottom-0 bg-card">
+      <button onclick="kembaliKeForm()" class="text-xs text-ink/50 underline mb-3">← Edit pesanan</button>
+      <div class="flex gap-3">
+        <button onclick="salinNota()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line">Salin</button>
+        <button onclick="kirimKeWarung()" class="w-2/3 flex items-center justify-center gap-2 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.42 1.27 4.86L2 22l5.34-1.31a9.9 9.9 0 0 0 4.7 1.2h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2Zm5.84 14.1c-.25.7-1.45 1.34-1.99 1.4-.51.06-1.04.09-3.36-.86-2.83-1.16-4.65-4.05-4.79-4.24-.14-.18-1.14-1.51-1.14-2.88s.72-2.04.97-2.32c.25-.28.55-.35.74-.35.18 0 .37 0 .53.01.17.01.4-.06.62.48.25.6.84 2.07.91 2.22.07.15.12.33.02.52-.32.62-.65.86-.9 1.16-.16.19-.3.38-.13.69.61 1.16 1.31 1.9 2.25 2.62.96.73 1.6.97 1.85 1.06.21.08.36.06.5-.07.18-.18.55-.66.7-.88.15-.22.3-.18.5-.11.21.07 1.32.66 1.55.78.23.12.38.18.43.28.06.1.06.56-.19 1.26Z"/></svg>
+          Kirim ke Warung
         </button>
       </div>
-
-      <div class="px-6 pb-6 pt-2 sticky bottom-0 bg-card border-t border-line">
-        <div class="flex gap-3 pt-4">
-          <button onclick="resetMenuDefault()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">Reset</button>
-          <button onclick="simpanAdmin()" class="w-2/3 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-sage">
-            Simpan Perubahan
-          </button>
-        </div>
-        <p id="admin-save-error" class="error-text text-center" style="display:none">Periksa lagi: nama & harga tiap menu wajib diisi.</p>
-      </div>
-
+      <p class="text-[11px] text-ink/40 mt-2">WhatsApp akan terbuka dengan nota siap kirim.</p>
+      <button onclick="bagikanLain()" class="text-xs text-ink/50 underline mt-3">Atau bagikan ke aplikasi lain</button>
     </div>
   </div>
+</div>
+
+<!-- ===== ADMIN PIN GATE ===== -->
+<div id="admin-pin-modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-center justify-center px-5" role="dialog">
+  <div class="anim-pop bg-card w-full max-w-xs rounded-3xl p-6">
+    <h2 class="font-display font-semibold text-lg text-ink mb-1">Masuk Admin</h2>
+    <p class="text-xs text-ink/50 mb-4">Masukkan PIN untuk mengedit menu.</p>
+    <input type="password" id="admin-pin-input" inputmode="numeric" class="w-full p-3 border border-line rounded-xl bg-card text-center tracking-[0.3em] font-mono focus:outline-none focus:ring-2 focus:ring-chili" placeholder="••••" maxlength="8">
+    <p id="admin-pin-error" class="error-text text-center" style="display:none">PIN salah, coba lagi.</p>
+    <div class="flex gap-3 mt-4">
+      <button onclick="tutupAdminPin()" class="w-1/2 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line">Batal</button>
+      <button onclick="cekPinAdmin()" class="w-1/2 bg-chili text-card py-3 rounded-xl font-bold hover:bg-chilidark transition-colors">Masuk</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADMIN MENU EDITOR ===== -->
+<div id="admin-modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-end sm:items-center justify-center" role="dialog">
+  <div class="anim-pop bg-card w-full max-w-md sm:rounded-3xl rounded-t-3xl max-h-[92vh] overflow-y-auto">
+    <div class="px-6 pt-6 pb-4 dashed-row border-t-0 flex items-start justify-between sticky top-0 bg-card z-10">
+      <div>
+        <p class="text-[11px] font-mono uppercase tracking-wide text-ink/40">Warung Kita</p>
+        <h2 class="font-display font-semibold text-xl text-ink">Kelola Menu</h2>
+      </div>
+      <button onclick="tutupAdmin()" class="text-ink/50 hover:text-ink text-xl leading-none p-1">✕</button>
+    </div>
+    <div id="admin-list" class="px-6 py-4 space-y-3"></div>
+    <div class="px-6 pb-4">
+      <button onclick="tambahMenuBaru()" class="w-full border border-dashed border-line text-ink/60 hover:text-ink hover:border-ink/40 py-3 rounded-xl font-semibold text-sm">+ Tambah menu baru</button>
+    </div>
+    <div class="px-6 pb-6 pt-2 sticky bottom-0 bg-card border-t border-line">
+      <div class="flex gap-3 pt-4">
+        <button onclick="resetMenuDefault()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line text-sm">Reset</button>
+        <button onclick="simpanAdmin()" class="w-2/3 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold">Simpan Perubahan</button>
+      </div>
+      <p id="admin-save-error" class="error-text text-center" style="display:none">Periksa lagi: nama & harga tiap menu wajib diisi.</p>
+    </div>
+  </div>
+</div>
 
 <script>
+  // ============================================================
+  // 1. KONFIGURASI
+  // ============================================================
   const NOMOR_WA = "6282234650150";
-
   const ADMIN_PIN = "1234";
   const MENU_STORAGE_KEY = "warungkita_menu_v1";
+  const ORDER_STORAGE_KEY = "warungkita_orders_v1";
 
   const DEFAULT_MENU_DATA = [
     { id: 1, kategori: "Makanan", nama: "Nasi Goreng Spesial", deskripsi: "Nasi goreng telur, ayam suwir, kerupuk & acar segar.", harga: 18000, spicy: true, variantLabel: "Tingkat pedas", variants: ["Pedas", "Sedang", "Tidak pedas"] },
@@ -288,6 +256,13 @@
     { id: 7, kategori: "Minuman", nama: "Kopi Susu Gula Aren", deskripsi: "Espresso, susu segar, dan gula aren asli.", harga: 14000, spicy: false, variantLabel: "Sajian", variants: ["Dingin", "Hangat"] },
   ];
 
+  // ============================================================
+  // 2. MANAJEMEN MENU
+  // ============================================================
+  let menuData = [];
+  const KATEGORI = ["Semua", "Makanan", "Minuman"];
+  let kategoriAktif = "Semua";
+
   function muatMenuData() {
     try {
       const raw = localStorage.getItem(MENU_STORAGE_KEY);
@@ -295,20 +270,16 @@
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length) return parsed;
       }
-    } catch (e) { /* fallback */ }
+    } catch (e) {}
     return JSON.parse(JSON.stringify(DEFAULT_MENU_DATA));
   }
 
   function simpanMenuData() {
-    try {
-      localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuData));
-    } catch (e) { /* ignore */ }
+    try { localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuData)); } catch (e) {}
   }
 
-  let menuData = muatMenuData();
+  menuData = muatMenuData();
 
-  const KATEGORI = ["Semua", "Makanan", "Minuman"];
-  let kategoriAktif = "Semua";
   let keranjang = [];
   const qtyKartu = {};
   function pastikanQtyKartu() {
@@ -373,7 +344,6 @@
             <p class="text-xs text-ink/60 mt-1 leading-relaxed">${item.deskripsi}</p>
           </div>
         </div>
-
         <div class="flex items-end gap-2">
           <div class="flex-1">
             <label for="var-${item.id}" class="text-[11px] text-ink/50 block mb-1">${item.variantLabel}</label>
@@ -381,16 +351,14 @@
               ${item.variants.map(v => `<option value="${v}">${v}</option>`).join("")}
             </select>
           </div>
-
           <div class="flex items-center border border-line rounded-lg overflow-hidden h-[42px]">
-            <button aria-label="Kurangi jumlah" onclick="ubahQtyKartu(${item.id}, -1)" class="w-9 h-full text-ink/60 hover:bg-paper focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">−</button>
+            <button aria-label="Kurangi" onclick="ubahQtyKartu(${item.id}, -1)" class="w-9 h-full text-ink/60 hover:bg-paper">−</button>
             <span id="qty-display-${item.id}" class="w-8 text-center font-mono text-sm">${qtyKartu[item.id]}</span>
-            <button aria-label="Tambah jumlah" onclick="ubahQtyKartu(${item.id}, 1)" class="w-9 h-full text-ink/60 hover:bg-paper focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">+</button>
+            <button aria-label="Tambah" onclick="ubahQtyKartu(${item.id}, 1)" class="w-9 h-full text-ink/60 hover:bg-paper">+</button>
           </div>
         </div>
-
         <button onclick="tambahKeKeranjang(${item.id})"
-          class="w-full bg-ink text-card py-2.5 rounded-xl font-semibold text-sm hover:bg-chili transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-chili">
+          class="w-full bg-ink text-card py-2.5 rounded-xl font-semibold text-sm hover:bg-chili transition-colors">
           Tambah ke keranjang
         </button>
       </article>
@@ -406,14 +374,12 @@
     const item = menuData.find(i => i.id === id);
     const varian = document.getElementById(`var-${id}`).value;
     const jumlah = qtyKartu[id];
-
     const existing = keranjang.find(k => k.menuId === id && k.varian === varian);
     if (existing) {
       existing.jumlah += jumlah;
     } else {
       keranjang.push({ cartId: `${id}-${Date.now()}`, menuId: id, nama: item.nama, varian, jumlah, harga: item.harga });
     }
-
     qtyKartu[id] = 1;
     document.getElementById(`qty-display-${id}`).innerText = 1;
     tampilkanToast(`✓ ${item.nama} ditambahkan`);
@@ -424,9 +390,7 @@
     const line = keranjang.find(k => k.cartId === cartId);
     if (!line) return;
     line.jumlah += delta;
-    if (line.jumlah <= 0) {
-      keranjang = keranjang.filter(k => k.cartId !== cartId);
-    }
+    if (line.jumlah <= 0) keranjang = keranjang.filter(k => k.cartId !== cartId);
     renderCart();
   }
 
@@ -435,7 +399,7 @@
     renderCart();
   }
 
-  function baris(item, ringkas) {
+  function baris(item) {
     return `
       <div class="flex items-center justify-between gap-2">
         <div class="min-w-0">
@@ -444,12 +408,12 @@
         </div>
         <div class="flex items-center gap-2 shrink-0">
           <div class="flex items-center border border-line rounded-lg overflow-hidden h-8">
-            <button aria-label="Kurangi" onclick="ubahQtyCart('${item.cartId}', -1)" class="w-7 h-full text-ink/60 hover:bg-paper text-sm">−</button>
+            <button onclick="ubahQtyCart('${item.cartId}', -1)" class="w-7 h-full text-ink/60 hover:bg-paper text-sm">−</button>
             <span class="w-6 text-center font-mono text-xs">${item.jumlah}</span>
-            <button aria-label="Tambah" onclick="ubahQtyCart('${item.cartId}', 1)" class="w-7 h-full text-ink/60 hover:bg-paper text-sm">+</button>
+            <button onclick="ubahQtyCart('${item.cartId}', 1)" class="w-7 h-full text-ink/60 hover:bg-paper text-sm">+</button>
           </div>
           <span class="font-mono text-xs text-ink/70 w-16 text-right">${formatRupiah(item.harga * item.jumlah)}</span>
-          <button aria-label="Hapus" onclick="hapusItem('${item.cartId}')" class="text-chili/70 hover:text-chili text-xs">✕</button>
+          <button onclick="hapusItem('${item.cartId}')" class="text-chili/70 hover:text-chili text-xs">✕</button>
         </div>
       </div>`;
   }
@@ -457,21 +421,14 @@
   function renderCart() {
     const totalQty = keranjang.reduce((s, i) => s + i.jumlah, 0);
     const totalHarga = keranjang.reduce((s, i) => s + i.harga * i.jumlah, 0);
-
     document.getElementById("cart-count").innerText = totalQty;
     document.getElementById("total-harga").innerText = formatRupiah(totalHarga);
     document.getElementById("total-modal").innerText = formatRupiah(totalHarga);
-
     const btn = document.getElementById("btn-checkout");
     btn.disabled = totalQty === 0;
-
     const drawer = document.getElementById("drawer");
     drawer.classList.toggle("open", totalQty > 0);
-
-    const listHtml = keranjang.length
-      ? keranjang.map(i => baris(i)).join("")
-      : `<p class="text-sm text-ink/50">Keranjang masih kosong. Yuk pilih menu favoritmu!</p>`;
-
+    const listHtml = keranjang.length ? keranjang.map(i => baris(i)).join("") : `<p class="text-sm text-ink/50">Keranjang masih kosong.</p>`;
     document.getElementById("preview-list").innerHTML = listHtml;
     document.getElementById("ringkasan-list").innerHTML = listHtml;
   }
@@ -486,16 +443,12 @@
 
   function toggleModal(show) {
     document.getElementById("modal").classList.toggle("hidden", !show);
-    if (show) {
-      document.getElementById("nama-user").focus();
-    } else {
-      kembaliKeForm();
-    }
+    if (show) document.getElementById("nama-user").focus();
+    else kembaliKeForm();
   }
 
   function tampilkanRingkasan() {
     if (keranjang.length === 0) return;
-    // reset ke metode "diantar" dan bersihkan error
     document.querySelector('input[name="metode"][value="diantar"]').checked = true;
     document.getElementById("field-nama").classList.remove("field-error");
     document.getElementById("field-alamat").classList.remove("field-error");
@@ -508,18 +461,12 @@
     const metode = document.querySelector('input[name="metode"]:checked').value;
     const alamatField = document.getElementById("field-alamat");
     const mejaField = document.getElementById("field-meja");
-
-    // sembunyikan semua
     alamatField.classList.add("hidden");
     mejaField.classList.add("hidden");
     alamatField.classList.remove("field-error");
     mejaField.classList.remove("field-error");
-
-    if (metode === "diantar") {
-      alamatField.classList.remove("hidden");
-    } else if (metode === "ditempat") {
-      mejaField.classList.remove("hidden");
-    }
+    if (metode === "diantar") alamatField.classList.remove("hidden");
+    else if (metode === "ditempat") mejaField.classList.remove("hidden");
   }
 
   function setError(fieldId, hasError) {
@@ -532,20 +479,17 @@
     const metode = document.querySelector('input[name="metode"]:checked').value;
     const alamat = document.getElementById("alamat-user").value.trim();
     const meja = document.getElementById("meja-user").value.trim();
-
     setError("field-nama", !nama);
     if (!nama) valid = false;
-
     if (metode === "diantar") {
       setError("field-alamat", !alamat);
       if (!alamat) valid = false;
       setError("field-meja", false);
-    } else { // ditempat
+    } else {
       setError("field-meja", !meja);
       if (!meja) valid = false;
       setError("field-alamat", false);
     }
-
     return valid;
   }
 
@@ -560,25 +504,15 @@
     const total = keranjang.reduce((s, i) => s + i.harga * i.jumlah, 0);
     const tanggal = new Date().toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
     const garis = "------------------------------";
-
     const baris = keranjang.map(item =>
       `${item.nama}\n  ${item.varian} x${item.jumlah}` +
       `${" ".repeat(Math.max(1, 22 - (`${item.varian} x${item.jumlah}`).length))}${formatRupiah(item.harga * item.jumlah)}`
     ).join("\n\n");
-
     let teks = `*WARUNG KITA*\nResep rumah, dari dapur ke meja\n${tanggal}\n${garis}\n${baris}\n${garis}\n*TOTAL: ${formatRupiah(total)}*\n\nNama: ${nama}\nMetode: `;
-
-    if (metode === "diantar") {
-      teks += `Diantar\nAlamat: ${alamat}`;
-    } else { // ditempat
-      teks += `Makan di tempat\nMeja: ${meja}`;
-    }
-
-    if (catatan) {
-      teks += `\nCatatan: ${catatan}`;
-    }
+    if (metode === "diantar") teks += `Diantar\nAlamat: ${alamat}`;
+    else teks += `Makan di tempat\nMeja: ${meja}`;
+    if (catatan) teks += `\nCatatan: ${catatan}`;
     teks += `\n\nTerima kasih sudah memesan! 🙏`;
-
     return teks;
   }
 
@@ -601,28 +535,200 @@
 
   function salinNota() {
     if (!notaText) return;
-    navigator.clipboard.writeText(notaText)
-      .then(() => tampilkanToast("Teks nota disalin."))
-      .catch(() => tampilkanToast("Gagal menyalin, coba lagi."));
+    navigator.clipboard.writeText(notaText).then(() => tampilkanToast("Teks nota disalin.")).catch(() => tampilkanToast("Gagal menyalin."));
   }
 
+  // ============================================================
+  // 3. MANAJEMEN PESANAN (ORDER) UNTUK DAPUR
+  // ============================================================
+  function muatOrders() {
+    try {
+      const raw = localStorage.getItem(ORDER_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  }
+
+  function simpanOrders(orders) {
+    try { localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orders)); } catch (e) {}
+  }
+
+  function tambahOrder(data) {
+    const orders = muatOrders();
+    const newOrder = {
+      id: Date.now() + '-' + Math.random().toString(36).substr(2, 4),
+      timestamp: Date.now(),
+      items: data.items,
+      metode: data.metode,
+      nama: data.nama,
+      alamat: data.alamat || '',
+      meja: data.meja || '',
+      catatan: data.catatan || '',
+      total: data.total,
+      status: 'pending'
+    };
+    orders.unshift(newOrder);
+    simpanOrders(orders);
+    return newOrder;
+  }
+
+  function updateStatus(orderId, newStatus) {
+    let orders = muatOrders();
+    const idx = orders.findIndex(o => o.id === orderId);
+    if (idx !== -1) {
+      orders[idx].status = newStatus;
+      simpanOrders(orders);
+      renderDapur();
+    }
+  }
+
+  function hapusOrder(orderId) {
+    let orders = muatOrders();
+    orders = orders.filter(o => o.id !== orderId);
+    simpanOrders(orders);
+    renderDapur();
+  }
+
+  // ============================================================
+  // 4. TAMPILAN DAPUR
+  // ============================================================
+  function renderDapur() {
+    const orders = muatOrders();
+    const sorted = [...orders].sort((a, b) => a.timestamp - b.timestamp);
+    const pending = sorted.filter(o => o.status === 'pending');
+    const today = new Date().toDateString();
+    const todayOrders = orders.filter(o => new Date(o.timestamp).toDateString() === today);
+
+    document.getElementById('pending-count').textContent = pending.length;
+    document.getElementById('today-count').textContent = todayOrders.length;
+
+    const container = document.getElementById('order-list');
+    if (sorted.length === 0) {
+      container.innerHTML = '';
+      document.getElementById('empty-kitchen').style.display = 'block';
+      return;
+    }
+    document.getElementById('empty-kitchen').style.display = 'none';
+
+    container.innerHTML = sorted.map(o => {
+      const statusMap = {
+        pending: { label: '⏳ Pending', class: 'bg-yellow-100 text-yellow-800' },
+        proses: { label: '🔄 Diproses', class: 'bg-blue-100 text-blue-800' },
+        selesai: { label: '✅ Selesai', class: 'bg-green-100 text-green-800' }
+      };
+      const st = statusMap[o.status] || statusMap.pending;
+      const itemList = o.items.map(i => `${i.nama} (${i.varian}) x${i.jumlah}`).join(', ');
+      const metodeLabel = o.metode === 'diantar' ? '🚚 Diantar' : '🏠 Makan di tempat';
+      const alamatMeja = o.metode === 'diantar' ? o.alamat : 'Meja '+o.meja;
+      const waktu = new Date(o.timestamp).toLocaleString('id-ID', { hour:'2-digit', minute:'2-digit' });
+
+      return `
+        <div class="bg-card border border-line rounded-2xl p-4 space-y-2">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="font-semibold text-ink">${o.nama}</span>
+              <span class="text-xs text-ink/50 ml-2">${waktu}</span>
+            </div>
+            <span class="status-badge ${st.class}">${st.label}</span>
+          </div>
+          <div class="text-sm text-ink/70">${itemList}</div>
+          <div class="flex items-center gap-2 text-xs text-ink/50">
+            <span>${metodeLabel}</span>
+            <span>•</span>
+            <span>${alamatMeja}</span>
+            ${o.catatan ? `<span>• ${o.catatan}</span>` : ''}
+          </div>
+          <div class="flex items-center justify-between pt-2">
+            <span class="font-mono text-sm font-semibold text-chili">${formatRupiah(o.total)}</span>
+            <div class="flex gap-2">
+              ${o.status !== 'selesai' ? `
+                <select onchange="updateStatus('${o.id}', this.value)" class="text-xs border border-line rounded-lg px-2 py-1 bg-paper">
+                  <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
+                  <option value="proses" ${o.status==='proses'?'selected':''}>Diproses</option>
+                  <option value="selesai" ${o.status==='selesai'?'selected':''}>Selesai</option>
+                </select>
+              ` : ''}
+              <button onclick="hapusOrder('${o.id}')" class="text-chili/70 hover:text-chili text-xs">✕</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ============================================================
+  // 5. KIRIM KE WA + SIMPAN ORDER
+  // ============================================================
   function kirimKeWarung() {
     if (!notaText) return;
+    const nama = document.getElementById("nama-user").value.trim();
+    const metode = document.querySelector('input[name="metode"]:checked').value;
+    const alamat = document.getElementById("alamat-user").value.trim();
+    const meja = document.getElementById("meja-user").value.trim();
+    const catatan = document.getElementById("catatan-user").value.trim();
+    const total = keranjang.reduce((s, i) => s + i.harga * i.jumlah, 0);
+    const items = keranjang.map(i => ({ nama: i.nama, varian: i.varian, jumlah: i.jumlah, harga: i.harga }));
+
+    tambahOrder({ nama, metode, alamat, meja, catatan, items, total });
+
     window.open(`https://wa.me/${NOMOR_WA}?text=${encodeURIComponent(notaText)}`, "_blank");
+    keranjang = [];
+    renderCart();
+    toggleModal(false);
+    tampilkanToast('✅ Pesanan dikirim & tersimpan di dapur!');
   }
 
   async function bagikanLain() {
     if (!notaText) return;
     if (navigator.share) {
-      try {
-        await navigator.share({ title: "Nota Pesanan", text: notaText });
-      } catch (e) { /* user cancelled */ }
+      try { await navigator.share({ title: "Nota Pesanan", text: notaText }); } catch (e) {}
     } else {
       salinNota();
     }
   }
 
-  // ===== ADMIN =====
+  // ============================================================
+  // 6. MODE TOGGLE (CUSTOMER / KITCHEN)
+  // ============================================================
+  let currentMode = 'customer';
+
+  function toggleMode() {
+    const btn = document.getElementById('toggleModeBtn');
+    if (currentMode === 'customer') {
+      currentMode = 'kitchen';
+      btn.textContent = '🛒 Pesan';
+      document.getElementById('page-customer').classList.remove('active');
+      document.getElementById('page-kitchen').classList.add('active');
+      document.getElementById('chip-row').style.display = 'none';
+      document.getElementById('checkout-bar').style.display = 'none';
+      document.getElementById('subtitle').textContent = '👨‍🍳 Dashboard dapur';
+      renderDapur();
+      if (!window._pollInterval) {
+        window._pollInterval = setInterval(() => {
+          if (currentMode === 'kitchen') renderDapur();
+        }, 5000);
+      }
+    } else {
+      currentMode = 'customer';
+      btn.textContent = '👨‍🍳 Dapur';
+      document.getElementById('page-kitchen').classList.remove('active');
+      document.getElementById('page-customer').classList.add('active');
+      document.getElementById('chip-row').style.display = 'flex';
+      document.getElementById('checkout-bar').style.display = 'block';
+      document.getElementById('subtitle').textContent = 'Resep rumah, dari dapur ke meja.';
+      if (window._pollInterval) {
+        clearInterval(window._pollInterval);
+        window._pollInterval = null;
+      }
+    }
+  }
+
+  // ============================================================
+  // 7. ADMIN MENU EDITOR
+  // ============================================================
   let adminDraft = [];
   let adminNextId = 1;
 
@@ -687,18 +793,16 @@
               <input type="number" min="0" step="500" data-field="harga" value="${item.harga}" class="w-full p-2.5 border border-line rounded-lg text-sm bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="0">
             </div>
           </div>
-          <button aria-label="Hapus menu" onclick="hapusMenuAdmin(${idx})" class="text-chili/70 hover:text-chili p-1.5 mt-5" title="Hapus menu">
+          <button onclick="hapusMenuAdmin(${idx})" class="text-chili/70 hover:text-chili p-1.5 mt-5">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
               <path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
             </svg>
           </button>
         </div>
-
         <div>
           <label class="text-[11px] text-ink/50 block mb-1">Deskripsi</label>
           <input type="text" data-field="deskripsi" value="${escAttr(item.deskripsi)}" class="w-full p-2.5 border border-line rounded-lg text-sm bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Deskripsi singkat">
         </div>
-
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-[11px] text-ink/50 block mb-1">Label varian</label>
@@ -709,7 +813,6 @@
             <input type="text" data-field="variants" value="${escAttr(item.variants.join(", "))}" class="w-full p-2.5 border border-line rounded-lg text-sm bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Pedas, Tidak pedas">
           </div>
         </div>
-
         <label class="flex items-center gap-2 text-sm text-ink/70 cursor-pointer w-fit">
           <input type="checkbox" data-field="spicy" ${item.spicy ? "checked" : ""} class="accent-chili w-4 h-4">
           Tandai pedas 🌶️
@@ -760,25 +863,19 @@
     const rows = document.querySelectorAll("#admin-list [data-admin-row]");
     const hasil = [];
     let valid = true;
-
     rows.forEach((row, idx) => {
       const data = bacaBarisAdmin(idx);
       if (!data.nama || data.harga <= 0) valid = false;
       if (!data.variants.length) data.variants = ["Standar"];
       hasil.push({ id: adminDraft[idx].id, ...data });
     });
-
     document.getElementById("admin-save-error").style.display = valid ? "none" : "block";
     if (!valid) return;
-
     const idBaru = new Set(hasil.map(i => i.id));
-
     menuData = hasil;
     pastikanQtyKartu();
     simpanMenuData();
-
     keranjang = keranjang.filter(k => idBaru.has(k.menuId));
-
     if (!KATEGORI.slice(1).some(k => menuData.some(i => i.kategori === k))) kategoriAktif = "Semua";
     renderChips();
     renderMenu();
@@ -794,6 +891,9 @@
     renderAdminList();
   }
 
+  // ============================================================
+  // 8. INISIALISASI
+  // ============================================================
   renderChips();
   renderMenu();
   renderCart();
