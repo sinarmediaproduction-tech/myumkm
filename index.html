@@ -161,7 +161,7 @@
 
           <div>
             <p class="text-xs font-semibold text-ink/70 mb-2">Cara pesanan diterima</p>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-3 gap-2">
               <label class="flex items-center justify-center gap-2 border border-line rounded-xl py-2.5 text-sm cursor-pointer has-[:checked]:border-chili has-[:checked]:bg-turmericlight/50 has-[:checked]:text-chili font-medium">
                 <input type="radio" name="metode" value="diantar" checked onchange="updateMetode()" class="accent-chili">
                 Diantar
@@ -169,6 +169,10 @@
               <label class="flex items-center justify-center gap-2 border border-line rounded-xl py-2.5 text-sm cursor-pointer has-[:checked]:border-chili has-[:checked]:bg-turmericlight/50 has-[:checked]:text-chili font-medium">
                 <input type="radio" name="metode" value="ambil" onchange="updateMetode()" class="accent-chili">
                 Ambil sendiri
+              </label>
+              <label class="flex items-center justify-center gap-2 border border-line rounded-xl py-2.5 text-sm cursor-pointer has-[:checked]:border-chili has-[:checked]:bg-turmericlight/50 has-[:checked]:text-chili font-medium">
+                <input type="radio" name="metode" value="ditempat" onchange="updateMetode()" class="accent-chili">
+                Makan di tempat
               </label>
             </div>
           </div>
@@ -183,6 +187,12 @@
             <label for="alamat-user" class="text-xs font-semibold text-ink/70 mb-1 block">Alamat pengiriman</label>
             <textarea id="alamat-user" class="w-full p-3 border border-line rounded-xl bg-card focus:outline-none focus:ring-2 focus:ring-chili" rows="2" placeholder="Jalan, nomor rumah, patokan"></textarea>
             <p class="error-text">Mohon isi alamat pengiriman.</p>
+          </div>
+
+          <div id="field-meja" class="hidden">
+            <label for="meja-user" class="text-xs font-semibold text-ink/70 mb-1 block">Nomor Meja</label>
+            <input type="text" id="meja-user" class="w-full p-3 border border-line rounded-xl bg-card focus:outline-none focus:ring-2 focus:ring-chili" placeholder="Contoh: 5, 7A">
+            <p class="error-text">Mohon isi nomor meja.</p>
           </div>
 
           <div>
@@ -491,14 +501,30 @@
 
   function tampilkanRingkasan() {
     if (keranjang.length === 0) return;
+    // reset metode ke diantar dan bersihkan error
+    document.querySelector('input[name="metode"][value="diantar"]').checked = true;
+    document.getElementById("field-nama").classList.remove("field-error");
+    document.getElementById("field-alamat").classList.remove("field-error");
+    document.getElementById("field-meja").classList.remove("field-error");
+    updateMetode();
     toggleModal(true);
   }
 
   function updateMetode() {
     const metode = document.querySelector('input[name="metode"]:checked').value;
     const alamatField = document.getElementById("field-alamat");
-    alamatField.classList.toggle("hidden", metode === "ambil");
-    if (metode === "ambil") alamatField.classList.remove("field-error");
+    const mejaField = document.getElementById("field-meja");
+    alamatField.classList.add("hidden");
+    mejaField.classList.add("hidden");
+    alamatField.classList.remove("field-error");
+    mejaField.classList.remove("field-error");
+
+    if (metode === "diantar") {
+      alamatField.classList.remove("hidden");
+    } else if (metode === "ditempat") {
+      mejaField.classList.remove("hidden");
+    }
+    // ambil sendiri: kedua field disembunyikan
   }
 
   function setError(fieldId, hasError) {
@@ -510,6 +536,7 @@
     const nama = document.getElementById("nama-user").value.trim();
     const metode = document.querySelector('input[name="metode"]:checked').value;
     const alamat = document.getElementById("alamat-user").value.trim();
+    const meja = document.getElementById("meja-user").value.trim();
 
     setError("field-nama", !nama);
     if (!nama) valid = false;
@@ -517,6 +544,14 @@
     if (metode === "diantar") {
       setError("field-alamat", !alamat);
       if (!alamat) valid = false;
+      setError("field-meja", false);
+    } else if (metode === "ditempat") {
+      setError("field-meja", !meja);
+      if (!meja) valid = false;
+      setError("field-alamat", false);
+    } else { // ambil sendiri
+      setError("field-alamat", false);
+      setError("field-meja", false);
     }
 
     return valid;
@@ -528,6 +563,7 @@
     const nama = document.getElementById("nama-user").value.trim();
     const metode = document.querySelector('input[name="metode"]:checked').value;
     const alamat = document.getElementById("alamat-user").value.trim();
+    const meja = document.getElementById("meja-user").value.trim();
     const catatan = document.getElementById("catatan-user").value.trim();
     const total = keranjang.reduce((s, i) => s + i.harga * i.jumlah, 0);
     const tanggal = new Date().toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
@@ -538,11 +574,16 @@
       `${" ".repeat(Math.max(1, 22 - (`${item.varian} x${item.jumlah}`).length))}${formatRupiah(item.harga * item.jumlah)}`
     ).join("\n\n");
 
-    let teks = `*WARUNG KITA*\nResep rumah, dari dapur ke meja\n${tanggal}\n${garis}\n${baris}\n${garis}\n*TOTAL: ${formatRupiah(total)}*\n\nNama: ${nama}\nMetode: ${metode === "diantar" ? "Diantar" : "Ambil sendiri"}`;
+    let teks = `*WARUNG KITA*\nResep rumah, dari dapur ke meja\n${tanggal}\n${garis}\n${baris}\n${garis}\n*TOTAL: ${formatRupiah(total)}*\n\nNama: ${nama}\nMetode: `;
 
     if (metode === "diantar") {
-      teks += `\nAlamat: ${alamat}`;
+      teks += `Diantar\nAlamat: ${alamat}`;
+    } else if (metode === "ditempat") {
+      teks += `Makan di tempat\nMeja: ${meja}`;
+    } else {
+      teks += `Ambil sendiri`;
     }
+
     if (catatan) {
       teks += `\nCatatan: ${catatan}`;
     }
