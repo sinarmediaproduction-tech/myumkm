@@ -199,11 +199,13 @@
         <button onclick="kembaliKeForm()" class="text-xs text-ink/50 underline mb-3 focus:outline-none">← Edit pesanan</button>
         <div class="flex gap-3">
           <button onclick="unduhNota()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-chili">Unduh</button>
-          <button onclick="bagikanNota()" class="w-2/3 flex items-center justify-center gap-2 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-sage">
+          <button onclick="kirimKeWarung()" class="w-2/3 flex items-center justify-center gap-2 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-sage">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.42 1.27 4.86L2 22l5.34-1.31a9.9 9.9 0 0 0 4.7 1.2h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2Zm5.84 14.1c-.25.7-1.45 1.34-1.99 1.4-.51.06-1.04.09-3.36-.86-2.83-1.16-4.65-4.05-4.79-4.24-.14-.18-1.14-1.51-1.14-2.88s.72-2.04.97-2.32c.25-.28.55-.35.74-.35.18 0 .37 0 .53.01.17.01.4-.06.62.48.25.6.84 2.07.91 2.22.07.15.12.33.02.52-.32.62-.65.86-.9 1.16-.16.19-.3.38-.13.69.61 1.16 1.31 1.9 2.25 2.62.96.73 1.6.97 1.85 1.06.21.08.36.06.5-.07.18-.18.55-.66.7-.88.15-.22.3-.18.5-.11.21.07 1.32.66 1.55.78.23.12.38.18.43.28.06.1.06.56-.19 1.26Z"/></svg>
-            Bagikan ke WhatsApp
+            Kirim ke Warung
           </button>
         </div>
+        <p class="text-[11px] text-ink/40 mt-2 leading-relaxed">Chat ke warung akan terbuka otomatis. Foto nota sudah terunduh — tinggal tap ikon lampiran di chat itu untuk melampirkannya.</p>
+        <button onclick="bagikanLain()" id="btn-bagikan-lain" class="text-xs text-ink/50 underline mt-3 focus:outline-none">Atau bagikan ke aplikasi lain</button>
       </div>
 
     </div>
@@ -537,7 +539,16 @@
     a.click();
   }
 
-  async function bagikanNota() {
+  function kirimKeWarung() {
+    if (!notaBlob) return;
+    // Selalu unduh notanya dulu, lalu buka chat ke NOMOR_WA — jadi tujuannya
+    // dijamin nomor warung yang sudah diatur, bukan dipilih bebas lewat share sheet.
+    unduhNota();
+    const pesan = "Halo, saya sudah memesan. Nota pesanan baru saja saya unduh, mohon dilampirkan di chat ini ya 🙏";
+    window.open(`https://wa.me/${NOMOR_WA}?text=${encodeURIComponent(pesan)}`, "_blank");
+  }
+
+  async function bagikanLain() {
     if (!notaBlob) return;
     const file = new File([notaBlob], "nota-pesanan.png", { type: "image/png" });
 
@@ -547,14 +558,9 @@
       } catch (e) {
         // dibatalkan oleh pengguna, tidak perlu tindakan lanjutan
       }
-      return;
+    } else {
+      tampilkanToast("Berbagi file tidak didukung di browser ini — gunakan tombol Unduh.");
     }
-
-    // fallback untuk browser/desktop yang belum mendukung share gambar:
-    // unduh nota, lalu buka chat WhatsApp tujuan supaya gambarnya bisa dilampirkan manual
-    unduhNota();
-    const pesan = "Halo, saya sudah memesan. Nota pesanan baru saja saya unduh, mohon dilampirkan di chat ini ya 🙏";
-    window.open(`https://wa.me/${NOMOR_WA}?text=${encodeURIComponent(pesan)}`, "_blank");
   }
 
   renderChips();
