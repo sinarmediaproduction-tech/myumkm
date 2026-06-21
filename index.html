@@ -39,7 +39,6 @@
   html, body { font-family: 'Plus Jakarta Sans', sans-serif; }
   body { background-color: var(--paper); color: #2A211B; }
 
-  /* torn receipt-edge, cut from the page background colour */
   .torn-edge { position: relative; }
   .torn-edge::before {
     content: "";
@@ -51,7 +50,6 @@
   }
 
   .dashed-row { border-top: 1px dashed #E3D5B8; }
-
   .chip-scroll::-webkit-scrollbar { display: none; }
   .chip-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -161,14 +159,10 @@
 
           <div>
             <p class="text-xs font-semibold text-ink/70 mb-2">Cara pesanan diterima</p>
-            <div class="grid grid-cols-3 gap-2">
+            <div class="grid grid-cols-2 gap-2">
               <label class="flex items-center justify-center gap-2 border border-line rounded-xl py-2.5 text-sm cursor-pointer has-[:checked]:border-chili has-[:checked]:bg-turmericlight/50 has-[:checked]:text-chili font-medium">
                 <input type="radio" name="metode" value="diantar" checked onchange="updateMetode()" class="accent-chili">
                 Diantar
-              </label>
-              <label class="flex items-center justify-center gap-2 border border-line rounded-xl py-2.5 text-sm cursor-pointer has-[:checked]:border-chili has-[:checked]:bg-turmericlight/50 has-[:checked]:text-chili font-medium">
-                <input type="radio" name="metode" value="ambil" onchange="updateMetode()" class="accent-chili">
-                Ambil sendiri
               </label>
               <label class="flex items-center justify-center gap-2 border border-line rounded-xl py-2.5 text-sm cursor-pointer has-[:checked]:border-chili has-[:checked]:bg-turmericlight/50 has-[:checked]:text-chili font-medium">
                 <input type="radio" name="metode" value="ditempat" onchange="updateMetode()" class="accent-chili">
@@ -279,9 +273,9 @@
   </div>
 
 <script>
-  const NOMOR_WA = "6282234650150"; // Nomor WhatsApp warung, format 62xxxxxxxxxx
+  const NOMOR_WA = "6282234650150";
 
-  const ADMIN_PIN = "1234"; // Ganti PIN admin di sini
+  const ADMIN_PIN = "1234";
   const MENU_STORAGE_KEY = "warungkita_menu_v1";
 
   const DEFAULT_MENU_DATA = [
@@ -301,14 +295,14 @@
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length) return parsed;
       }
-    } catch (e) { /* localStorage tidak tersedia / data rusak, pakai default */ }
+    } catch (e) { /* fallback */ }
     return JSON.parse(JSON.stringify(DEFAULT_MENU_DATA));
   }
 
   function simpanMenuData() {
     try {
       localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuData));
-    } catch (e) { /* localStorage tidak tersedia, perubahan hanya berlaku sesi ini */ }
+    } catch (e) { /* ignore */ }
   }
 
   let menuData = muatMenuData();
@@ -501,7 +495,7 @@
 
   function tampilkanRingkasan() {
     if (keranjang.length === 0) return;
-    // reset metode ke diantar dan bersihkan error
+    // reset ke metode "diantar" dan bersihkan error
     document.querySelector('input[name="metode"][value="diantar"]').checked = true;
     document.getElementById("field-nama").classList.remove("field-error");
     document.getElementById("field-alamat").classList.remove("field-error");
@@ -514,6 +508,8 @@
     const metode = document.querySelector('input[name="metode"]:checked').value;
     const alamatField = document.getElementById("field-alamat");
     const mejaField = document.getElementById("field-meja");
+
+    // sembunyikan semua
     alamatField.classList.add("hidden");
     mejaField.classList.add("hidden");
     alamatField.classList.remove("field-error");
@@ -524,7 +520,6 @@
     } else if (metode === "ditempat") {
       mejaField.classList.remove("hidden");
     }
-    // ambil sendiri: kedua field disembunyikan
   }
 
   function setError(fieldId, hasError) {
@@ -545,13 +540,10 @@
       setError("field-alamat", !alamat);
       if (!alamat) valid = false;
       setError("field-meja", false);
-    } else if (metode === "ditempat") {
+    } else { // ditempat
       setError("field-meja", !meja);
       if (!meja) valid = false;
       setError("field-alamat", false);
-    } else { // ambil sendiri
-      setError("field-alamat", false);
-      setError("field-meja", false);
     }
 
     return valid;
@@ -578,10 +570,8 @@
 
     if (metode === "diantar") {
       teks += `Diantar\nAlamat: ${alamat}`;
-    } else if (metode === "ditempat") {
+    } else { // ditempat
       teks += `Makan di tempat\nMeja: ${meja}`;
-    } else {
-      teks += `Ambil sendiri`;
     }
 
     if (catatan) {
@@ -626,15 +616,13 @@
     if (navigator.share) {
       try {
         await navigator.share({ title: "Nota Pesanan", text: notaText });
-      } catch (e) {
-        // dibatalkan oleh pengguna, tidak perlu tindakan lanjutan
-      }
+      } catch (e) { /* user cancelled */ }
     } else {
       salinNota();
     }
   }
 
-  // ===== ADMIN: kelola menu =====
+  // ===== ADMIN =====
   let adminDraft = [];
   let adminNextId = 1;
 
@@ -789,7 +777,6 @@
     pastikanQtyKartu();
     simpanMenuData();
 
-    // buang item keranjang yang menunya sudah dihapus dari admin
     keranjang = keranjang.filter(k => idBaru.has(k.menuId));
 
     if (!KATEGORI.slice(1).some(k => menuData.some(i => i.kategori === k))) kategoriAktif = "Semua";
