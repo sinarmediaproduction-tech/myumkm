@@ -51,6 +51,8 @@
   .error-text { color: #C1432A; font-size:12px; margin-top:4px; display:none; }
   .field-error .error-text { display:block; }
   .field-error input, .field-error textarea { border-color:#C1432A !important; }
+  .page { display: none; }
+  .page.active { display: block; }
   .tab-btn { transition: all 0.2s; }
   .tab-btn.active { background: #C1432A; color: white; border-color: #C1432A; }
   .tab-content { display: none; }
@@ -66,34 +68,76 @@
     <div class="flex items-center justify-between">
       <div>
         <h1 class="font-display italic font-semibold text-2xl text-ink leading-none">Warung Kita</h1>
-        <p class="text-xs text-ink/60 mt-1">Resep rumah, dari dapur ke meja.</p>
+        <p class="text-xs text-ink/60 mt-1" id="subtitle">Resep rumah, dari dapur ke meja.</p>
       </div>
       <div class="flex items-center gap-2">
         <span class="flex items-center gap-1.5 text-[11px] font-mono text-sage bg-sagelight px-2.5 py-1 rounded-full">
           <span class="w-1.5 h-1.5 rounded-full bg-sage"></span> Buka 08–21
         </span>
-        <button onclick="bukaAdminGate()" aria-label="Admin" class="text-ink/40 hover:text-ink/70 p-1 focus:outline-none">
+        <!-- Tombol Admin (hanya muncul di mode customer) -->
+        <button id="adminBtn" onclick="bukaAdminGate()" aria-label="Admin" class="text-ink/40 hover:text-ink/70 p-1 focus:outline-none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 13a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H4a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H10a1.65 1.65 0 0 0 1-1.51V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V10a1.65 1.65 0 0 0 1.51 1H20a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
           </svg>
         </button>
+        <!-- Tombol Kembali (hanya muncul di mode admin) -->
+        <button id="backBtn" onclick="keluarAdmin()" class="hidden text-sm text-ink/60 hover:text-ink font-medium px-3 py-1 rounded-full border border-line bg-card">
+          ← Kembali
+        </button>
       </div>
     </div>
-    <!-- category chips -->
+    <!-- category chips (hanya untuk customer) -->
     <div id="chip-row" class="chip-scroll flex gap-2 mt-4 overflow-x-auto"></div>
   </div>
 </header>
 
 <!-- ===== HALAMAN PELANGGAN ===== -->
-<main class="max-w-md mx-auto px-5 pt-5" id="page-customer">
+<div id="page-customer" class="page active max-w-md mx-auto px-5 pt-5">
   <div id="menu-container" class="grid grid-cols-1 gap-4"></div>
-</main>
+</div>
+
+<!-- ===== HALAMAN ADMIN ===== -->
+<div id="page-admin" class="page max-w-md mx-auto px-5 pt-5">
+  <!-- Tab header -->
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="font-display text-xl font-semibold">👨‍🍳 Admin Panel</h2>
+    <div class="text-sm text-ink/60">
+      <span id="pending-count-admin">0</span> pending · total hari ini <span id="today-count-admin">0</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-2 border-b border-line mb-4">
+    <button class="tab-btn active px-4 py-2 text-sm font-semibold rounded-t-lg border border-b-0 border-line bg-card" data-tab="tab-orders">📋 Pesanan</button>
+    <button class="tab-btn px-4 py-2 text-sm font-semibold rounded-t-lg border border-b-0 border-line bg-card" data-tab="tab-menu">🍽️ Menu</button>
+  </div>
+
+  <!-- Tab: Pesanan -->
+  <div id="tab-orders" class="tab-content active">
+    <div class="flex justify-end mb-3">
+      <button onclick="refreshOrders()" class="text-xs text-sage underline">↻ refresh</button>
+    </div>
+    <div id="order-list-admin" class="space-y-3"></div>
+    <p id="empty-orders-admin" class="text-center text-ink/40 text-sm py-8">Belum ada pesanan masuk.</p>
+  </div>
+
+  <!-- Tab: Menu -->
+  <div id="tab-menu" class="tab-content">
+    <div id="admin-list" class="space-y-3"></div>
+    <button onclick="tambahMenuBaru()" class="w-full border border-dashed border-line text-ink/60 hover:text-ink hover:border-ink/40 py-3 rounded-xl font-semibold text-sm mt-3">+ Tambah menu baru</button>
+    <div class="mt-4 flex gap-3">
+      <button onclick="resetMenuDefault()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line text-sm">Reset</button>
+      <button onclick="simpanAdmin()" class="w-2/3 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold">Simpan Perubahan</button>
+    </div>
+    <p id="admin-save-error" class="error-text text-center" style="display:none">Periksa lagi: nama & harga tiap menu wajib diisi.</p>
+  </div>
+</div>
 
 <!-- ===== TOAST ===== -->
 <div id="toast" class="hidden fixed bottom-28 left-1/2 -translate-x-1/2 z-30 bg-ink text-paper text-sm font-medium px-4 py-2 rounded-full shadow-lg anim-toast" role="status"></div>
 
-<!-- ===== STICKY CHECKOUT BAR ===== -->
+<!-- ===== STICKY CHECKOUT BAR (customer) ===== -->
 <div class="fixed bottom-0 left-0 right-0 z-40" id="checkout-bar">
   <div class="max-w-md mx-auto">
     <div class="torn-edge bg-card border-t border-line rounded-t-3xl shadow-[0_-8px_24px_-8px_rgba(0,0,0,0.15)] px-5 pt-4">
@@ -186,7 +230,7 @@
   </div>
 </div>
 
-<!-- ===== ADMIN PIN GATE ===== -->
+<!-- ===== ADMIN PIN GATE (modal kecil) ===== -->
 <div id="admin-pin-modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-center justify-center px-5" role="dialog">
   <div class="anim-pop bg-card w-full max-w-xs rounded-3xl p-6">
     <h2 class="font-display font-semibold text-lg text-ink mb-1">Admin Panel</h2>
@@ -197,50 +241,6 @@
       <button onclick="tutupAdminPin()" class="w-1/2 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line">Batal</button>
       <button onclick="cekPinAdmin()" class="w-1/2 bg-chili text-card py-3 rounded-xl font-bold hover:bg-chilidark transition-colors">Masuk</button>
     </div>
-  </div>
-</div>
-
-<!-- ===== ADMIN PANEL (DAPUR + MENU) ===== -->
-<div id="admin-modal" class="hidden fixed inset-0 bg-ink/50 z-50 flex items-end sm:items-center justify-center" role="dialog">
-  <div class="anim-pop bg-card w-full max-w-md sm:rounded-3xl rounded-t-3xl max-h-[92vh] overflow-y-auto">
-    <!-- Header -->
-    <div class="px-6 pt-6 pb-4 dashed-row border-t-0 flex items-start justify-between sticky top-0 bg-card z-10">
-      <div>
-        <p class="text-[11px] font-mono uppercase tracking-wide text-ink/40">Warung Kita</p>
-        <h2 class="font-display font-semibold text-xl text-ink">Admin Panel</h2>
-      </div>
-      <button onclick="tutupAdmin()" class="text-ink/50 hover:text-ink text-xl leading-none p-1">✕</button>
-    </div>
-
-    <!-- Tabs -->
-    <div class="px-6 pt-2 flex gap-2 border-b border-line">
-      <button class="tab-btn active px-4 py-2 text-sm font-semibold rounded-t-lg border border-b-0 border-line bg-card" data-tab="tab-orders">📋 Pesanan</button>
-      <button class="tab-btn px-4 py-2 text-sm font-semibold rounded-t-lg border border-b-0 border-line bg-card" data-tab="tab-menu">🍽️ Menu</button>
-    </div>
-
-    <!-- Tab content: Pesanan -->
-    <div id="tab-orders" class="tab-content active px-6 py-4">
-      <div class="flex items-center justify-between mb-4">
-        <span class="text-sm text-ink/60">
-          <span id="pending-count-admin">0</span> pending · total hari ini <span id="today-count-admin">0</span>
-        </span>
-        <button onclick="refreshOrders()" class="text-xs text-sage underline">↻ refresh</button>
-      </div>
-      <div id="order-list-admin" class="space-y-3"></div>
-      <p id="empty-orders-admin" class="text-center text-ink/40 text-sm py-8">Belum ada pesanan masuk.</p>
-    </div>
-
-    <!-- Tab content: Menu -->
-    <div id="tab-menu" class="tab-content px-6 py-4">
-      <div id="admin-list" class="space-y-3"></div>
-      <button onclick="tambahMenuBaru()" class="w-full border border-dashed border-line text-ink/60 hover:text-ink hover:border-ink/40 py-3 rounded-xl font-semibold text-sm mt-3">+ Tambah menu baru</button>
-      <div class="mt-4 flex gap-3">
-        <button onclick="resetMenuDefault()" class="w-1/3 bg-paper text-ink/70 py-3 rounded-xl font-semibold border border-line text-sm">Reset</button>
-        <button onclick="simpanAdmin()" class="w-2/3 bg-sage hover:bg-sagedark text-card py-3 rounded-xl font-bold">Simpan Perubahan</button>
-      </div>
-      <p id="admin-save-error" class="error-text text-center" style="display:none">Periksa lagi: nama & harga tiap menu wajib diisi.</p>
-    </div>
-
   </div>
 </div>
 
@@ -289,7 +289,7 @@
   pastikanQtyKartu();
 
   // ============================================================
-  // 2. FUNGSI MENU & KERANJANG (sama seperti sebelumnya)
+  // 2. FUNGSI MENU & KERANJANG
   // ============================================================
   function formatRupiah(n) { return "Rp " + n.toLocaleString("id-ID"); }
 
@@ -697,7 +697,7 @@
   }
 
   // ============================================================
-  // 6. ADMIN PANEL (PIN GATE + TAB)
+  // 6. ADMIN PANEL (PIN GATE + NAVIGASI HALAMAN)
   // ============================================================
   function bukaAdminGate() {
     document.getElementById("admin-pin-modal").classList.remove("hidden");
@@ -714,7 +714,7 @@
     const input = document.getElementById("admin-pin-input");
     if (input.value === ADMIN_PIN) {
       tutupAdminPin();
-      bukaAdmin();
+      masukAdmin();
     } else {
       document.getElementById("admin-pin-error").style.display = "block";
       input.focus();
@@ -722,24 +722,52 @@
     }
   }
 
-  function bukaAdmin() {
-    // reset tab ke "Pesanan"
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  function masukAdmin() {
+    // Sembunyikan halaman customer, tampilkan admin
+    document.getElementById('page-customer').classList.remove('active');
+    document.getElementById('page-admin').classList.add('active');
+    document.getElementById('chip-row').style.display = 'none';
+    document.getElementById('checkout-bar').style.display = 'none';
+    document.getElementById('adminBtn').style.display = 'none';
+    document.getElementById('backBtn').classList.remove('hidden');
+    document.getElementById('subtitle').textContent = '👨‍🍳 Panel Admin';
+
+    // Reset tab ke Pesanan
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelector('.tab-btn[data-tab="tab-orders"]').classList.add('active');
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.getElementById('tab-orders').classList.add('active');
 
     renderOrdersAdmin();
-    renderAdminList();  // menu list
-    document.getElementById("admin-modal").classList.remove("hidden");
+    renderAdminList();
     document.getElementById("admin-save-error").style.display = "none";
+
+    // Mulai auto-refresh order setiap 10 detik
+    if (window._adminInterval) clearInterval(window._adminInterval);
+    window._adminInterval = setInterval(() => {
+      if (document.getElementById('page-admin').classList.contains('active')) {
+        renderOrdersAdmin();
+      }
+    }, 10000);
   }
 
-  function tutupAdmin() {
-    document.getElementById("admin-modal").classList.add("hidden");
+  function keluarAdmin() {
+    // Kembali ke halaman customer
+    document.getElementById('page-admin').classList.remove('active');
+    document.getElementById('page-customer').classList.add('active');
+    document.getElementById('chip-row').style.display = 'flex';
+    document.getElementById('checkout-bar').style.display = 'block';
+    document.getElementById('adminBtn').style.display = 'inline-block';
+    document.getElementById('backBtn').classList.add('hidden');
+    document.getElementById('subtitle').textContent = 'Resep rumah, dari dapur ke meja.';
+
+    if (window._adminInterval) {
+      clearInterval(window._adminInterval);
+      window._adminInterval = null;
+    }
   }
 
-  // Tab switching
+  // Tab switching (event listener)
   document.addEventListener('click', function(e) {
     const btn = e.target.closest('.tab-btn');
     if (btn) {
@@ -747,7 +775,6 @@
       btn.classList.add('active');
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.getElementById(btn.dataset.tab).classList.add('active');
-      // refresh orders jika tab pesanan
       if (btn.dataset.tab === 'tab-orders') renderOrdersAdmin();
     }
   });
@@ -890,13 +917,6 @@
   renderChips();
   renderMenu();
   renderCart();
-
-  // Auto-refresh order di admin setiap 10 detik jika admin panel terbuka
-  setInterval(() => {
-    if (!document.getElementById('admin-modal').classList.contains('hidden')) {
-      renderOrdersAdmin();
-    }
-  }, 10000);
 </script>
 </body>
 </html>
